@@ -173,7 +173,7 @@ export default class Alert extends React.Component<AlertProps, AlertState> {
       </Animate>
     );
   };
-  //test
+
   render() {
     return <ConfigConsumer>{this.renderAlert}</ConfigConsumer>;
   }
