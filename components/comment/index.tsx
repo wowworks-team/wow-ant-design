@@ -32,7 +32,7 @@ export interface CommentProps {
   /** A datetime element containing the time to be displayed */
   datetime?: React.ReactNode;
   /** Icon for staff of WowWorks */
-  wowIcon?: boolean;
+  icon?: boolean;
 }
 
 export default class Comment extends React.Component<CommentProps, {}> {
@@ -51,7 +51,7 @@ export default class Comment extends React.Component<CommentProps, {}> {
       prefixCls: customizePrefixCls,
       style,
       datetime,
-      wowIcon,
+      icon,
       ...otherProps
     } = this.props;
 
@@ -71,7 +71,7 @@ export default class Comment extends React.Component<CommentProps, {}> {
     const authorContent = (
       <div className={`${prefixCls}-content-author`}>
         {author && <span className={`${prefixCls}-content-author-name`}>{author}</span>}
-        {wowIcon && (
+        {icon && (
           <span className={`${prefixCls}-wow-icon`}>
             <WowIcon />
           </span>
