@@ -76,6 +76,7 @@
     "tsc": "tsc",
     "site:test": "jest --config .jest.site.js --cache=false",
     "firebase:deploy": "rimraf ./buildFile && npm run build && firebase deploy",
+    "pre": "npm run dist && npm run compile",
     "publishsc": "npm run dist && npm run compile && npm publish --public"
   },
   "husky": {

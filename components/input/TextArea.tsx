@@ -14,11 +14,22 @@ export interface TextAreaProps extends HTMLTextareaProps {
   autoSize?: boolean | AutoSizeType;
   onPressEnter?: React.KeyboardEventHandler<HTMLTextAreaElement>;
   allowClear?: boolean;
+  verticalSize?: TextAreaSizeKeys;
 }
 
 export interface TextAreaState {
   value: any;
 }
+
+export enum TextAreaSizeKeys {
+  Default = 'default',
+}
+
+type TextAreaSizeMap = { [K in TextAreaSizeKeys]: number };
+
+const TextAreaSize: TextAreaSizeMap = {
+  [TextAreaSizeKeys.Default]: 4,
+};
 
 class TextArea extends React.Component<TextAreaProps, TextAreaState> {
   resizableTextArea: ResizableTextArea;
@@ -89,6 +100,11 @@ class TextArea extends React.Component<TextAreaProps, TextAreaState> {
     resolveOnChange(this.resizableTextArea.textArea, e, this.props.onChange);
   };
 
+  getRows = (): number => {
+    if (this.props.verticalSize) return TextAreaSize[this.props.verticalSize];
+    return TextAreaSize[TextAreaSizeKeys.Default];
+  };
+
   renderTextArea = (prefixCls: string) => {
     return (
       <ResizableTextArea
@@ -97,6 +113,7 @@ class TextArea extends React.Component<TextAreaProps, TextAreaState> {
         onKeyDown={this.handleKeyDown}
         onChange={this.handleChange}
         ref={this.saveTextArea}
+        rows={this.getRows()}
       />
     );
   };
