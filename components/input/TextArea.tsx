@@ -97,7 +97,6 @@ class TextArea extends React.Component<TextAreaProps, TextAreaState> {
         onKeyDown={this.handleKeyDown}
         onChange={this.handleChange}
         ref={this.saveTextArea}
-        rows={4}
       />
     );
   };
