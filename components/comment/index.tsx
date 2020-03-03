@@ -1,7 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import { ConfigConsumer, ConfigConsumerProps } from '../config-provider';
-import WowIcon from './wowIcon';
 
 function getAction(actions: React.ReactNode[]) {
   if (!actions || !actions.length) {
@@ -31,8 +30,6 @@ export interface CommentProps {
   style?: React.CSSProperties;
   /** A datetime element containing the time to be displayed */
   datetime?: React.ReactNode;
-  /** Icon for staff of WowWorks */
-  wowIcon?: boolean;
 }
 
 export default class Comment extends React.Component<CommentProps, {}> {
@@ -51,7 +48,6 @@ export default class Comment extends React.Component<CommentProps, {}> {
       prefixCls: customizePrefixCls,
       style,
       datetime,
-      wowIcon,
       ...otherProps
     } = this.props;
 
@@ -71,11 +67,6 @@ export default class Comment extends React.Component<CommentProps, {}> {
     const authorContent = (
       <div className={`${prefixCls}-content-author`}>
         {author && <span className={`${prefixCls}-content-author-name`}>{author}</span>}
-        {wowIcon && (
-          <span className={`${prefixCls}-wow-icon`}>
-            <WowIcon />
-          </span>
-        )}
         {datetime && <span className={`${prefixCls}-content-author-time`}>{datetime}</span>}
       </div>
     );
