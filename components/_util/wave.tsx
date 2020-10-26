@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { findDOMNode } from 'react-dom';
-import TransitionEvents from 'css-animation/lib/Event';
+import TransitionEvents from '@ant-design/css-animation/lib/Event';
 import raf from './raf';
-import { ConfigConsumer, ConfigConsumerProps, CSPConfig } from '../config-provider';
+import { ConfigConsumer, ConfigConsumerProps, CSPConfig, ConfigContext } from '../config-provider';
 
-let styleForPesudo: HTMLStyleElement | null;
+let styleForPseudo: HTMLStyleElement | null;
 
 // Where el is the DOM element you'd like to test for visibility
 function isHidden(element: HTMLElement) {
@@ -16,7 +16,7 @@ function isHidden(element: HTMLElement) {
 
 function isNotGrey(color: string) {
   // eslint-disable-next-line no-useless-escape
-  const match = (color || '').match(/rgba?\((\d*), (\d*), (\d*)(, [\.\d]*)?\)/);
+  const match = (color || '').match(/rgba?\((\d*), (\d*), (\d*)(, [\d.]*)?\)/);
   if (match && match[1] && match[2] && match[3]) {
     return !(match[1] === match[2] && match[2] === match[3]);
   }
@@ -24,6 +24,8 @@ function isNotGrey(color: string) {
 }
 
 export default class Wave extends React.Component<{ insertExtraNode?: boolean }> {
+  static contextType = ConfigContext;
+
   private instance?: {
     cancel: () => void;
   };
@@ -36,9 +38,11 @@ export default class Wave extends React.Component<{ insertExtraNode?: boolean }>
 
   private animationStart: boolean = false;
 
-  private destroy: boolean = false;
+  private destroyed: boolean = false;
 
   private csp?: CSPConfig;
+
+  context: ConfigConsumerProps;
 
   componentDidMount() {
     const node = findDOMNode(this) as HTMLElement;
@@ -56,7 +60,7 @@ export default class Wave extends React.Component<{ insertExtraNode?: boolean }>
       clearTimeout(this.clickWaveTimeoutId);
     }
 
-    this.destroy = true;
+    this.destroyed = true;
   }
 
   onClick = (node: HTMLElement, waveColor: string) => {
@@ -66,31 +70,34 @@ export default class Wave extends React.Component<{ insertExtraNode?: boolean }>
     const { insertExtraNode } = this.props;
     this.extraNode = document.createElement('div');
     const { extraNode } = this;
-    extraNode.className = 'ant-click-animating-node';
+    const { getPrefixCls } = this.context;
+    extraNode.className = `${getPrefixCls('')}-click-animating-node`;
     const attributeName = this.getAttributeName();
     node.setAttribute(attributeName, 'true');
-    // Not white or transparnt or grey
-    styleForPesudo = styleForPesudo || document.createElement('style');
+    // Not white or transparent or grey
+    styleForPseudo = styleForPseudo || document.createElement('style');
     if (
       waveColor &&
       waveColor !== '#ffffff' &&
       waveColor !== 'rgb(255, 255, 255)' &&
       isNotGrey(waveColor) &&
-      !/rgba\(\d*, \d*, \d*, 0\)/.test(waveColor) && // any transparent rgba color
+      !/rgba\((?:\d*, ){3}0\)/.test(waveColor) && // any transparent rgba color
       waveColor !== 'transparent'
     ) {
       // Add nonce if CSP exist
       if (this.csp && this.csp.nonce) {
-        styleForPesudo.nonce = this.csp.nonce;
+        styleForPseudo.nonce = this.csp.nonce;
       }
 
       extraNode.style.borderColor = waveColor;
-      styleForPesudo.innerHTML = `
-      [ant-click-animating-without-extra-node='true']::after, .ant-click-animating-node {
+      styleForPseudo.innerHTML = `
+      [${getPrefixCls('')}-click-animating-without-extra-node='true']::after, .${getPrefixCls(
+        '',
+      )}-click-animating-node {
         --antd-wave-shadow-color: ${waveColor};
       }`;
-      if (!document.body.contains(styleForPesudo)) {
-        document.body.appendChild(styleForPesudo);
+      if (!document.body.contains(styleForPseudo)) {
+        document.body.appendChild(styleForPseudo);
       }
     }
     if (insertExtraNode) {
@@ -101,16 +108,15 @@ export default class Wave extends React.Component<{ insertExtraNode?: boolean }>
   };
 
   onTransitionStart = (e: AnimationEvent) => {
-    if (this.destroy) return;
-
-    const node = findDOMNode(this) as HTMLElement;
-    if (!e || e.target !== node) {
+    if (this.destroyed) {
       return;
     }
 
-    if (!this.animationStart) {
-      this.resetEffect(node);
+    const node = findDOMNode(this) as HTMLElement;
+    if (!e || e.target !== node || this.animationStart) {
+      return;
     }
+    this.resetEffect(node);
   };
 
   onTransitionEnd = (e: AnimationEvent) => {
@@ -121,8 +127,11 @@ export default class Wave extends React.Component<{ insertExtraNode?: boolean }>
   };
 
   getAttributeName() {
+    const { getPrefixCls } = this.context;
     const { insertExtraNode } = this.props;
-    return insertExtraNode ? 'ant-click-animating' : 'ant-click-animating-without-extra-node';
+    return insertExtraNode
+      ? `${getPrefixCls('')}-click-animating`
+      : `${getPrefixCls('')}-click-animating-without-extra-node`;
   }
 
   bindAnimationEvent = (node: HTMLElement) => {
@@ -171,8 +180,8 @@ export default class Wave extends React.Component<{ insertExtraNode?: boolean }>
     const attributeName = this.getAttributeName();
     node.setAttribute(attributeName, 'false'); // edge has bug on `removeAttribute` #14466
 
-    if (styleForPesudo) {
-      styleForPesudo.innerHTML = '';
+    if (styleForPseudo) {
+      styleForPseudo.innerHTML = '';
     }
 
     if (insertExtraNode && this.extraNode && node.contains(this.extraNode)) {

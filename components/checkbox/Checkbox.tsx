@@ -1,12 +1,9 @@
 import * as React from 'react';
-import * as PropTypes from 'prop-types';
-import { polyfill } from 'react-lifecycles-compat';
 import classNames from 'classnames';
 import RcCheckbox from 'rc-checkbox';
-import shallowEqual from 'shallowequal';
-import CheckboxGroup, { CheckboxGroupContext } from './Group';
+import CheckboxGroup, { GroupContext } from './Group';
 import { ConfigConsumer, ConfigConsumerProps } from '../config-provider';
-import warning from '../_util/warning';
+import devWarning from '../_util/devWarning';
 
 export interface AbstractCheckboxProps<T> {
   prefixCls?: string;
@@ -27,10 +24,7 @@ export interface AbstractCheckboxProps<T> {
   children?: React.ReactNode;
   id?: string;
   autoFocus?: boolean;
-}
-
-export interface CheckboxProps extends AbstractCheckboxProps<CheckboxChangeEvent> {
-  indeterminate?: boolean;
+  type?: string;
 }
 
 export interface CheckboxChangeEventTarget extends CheckboxProps {
@@ -44,7 +38,11 @@ export interface CheckboxChangeEvent {
   nativeEvent: MouseEvent;
 }
 
-class Checkbox extends React.Component<CheckboxProps, {}> {
+export interface CheckboxProps extends AbstractCheckboxProps<CheckboxChangeEvent> {
+  indeterminate?: boolean;
+}
+
+class Checkbox extends React.PureComponent<CheckboxProps, {}> {
   static Group: typeof CheckboxGroup;
 
   static __ANT_CHECKBOX = true;
@@ -53,9 +51,7 @@ class Checkbox extends React.Component<CheckboxProps, {}> {
     indeterminate: false,
   };
 
-  static contextTypes = {
-    checkboxGroup: PropTypes.any,
-  };
+  static contextType = GroupContext;
 
   context: any;
 
@@ -63,45 +59,26 @@ class Checkbox extends React.Component<CheckboxProps, {}> {
 
   componentDidMount() {
     const { value } = this.props;
-    const { checkboxGroup = {} } = this.context || {};
-    if (checkboxGroup.registerValue) {
-      checkboxGroup.registerValue(value);
-    }
+    this.context?.registerValue(value);
 
-    warning(
-      'checked' in this.props || (this.context || {}).checkboxGroup || !('value' in this.props),
+    devWarning(
+      'checked' in this.props || this.context || !('value' in this.props),
       'Checkbox',
-      '`value` is not validate prop, do you mean `checked`?',
-    );
-  }
-
-  shouldComponentUpdate(
-    nextProps: CheckboxProps,
-    nextState: {},
-    nextContext: CheckboxGroupContext,
-  ) {
-    return (
-      !shallowEqual(this.props, nextProps) ||
-      !shallowEqual(this.state, nextState) ||
-      !shallowEqual(this.context.checkboxGroup, nextContext.checkboxGroup)
+      '`value` is not a valid prop, do you mean `checked`?',
     );
   }
 
   componentDidUpdate({ value: prevValue }: CheckboxProps) {
     const { value } = this.props;
-    const { checkboxGroup = {} } = this.context || {};
-    if (value !== prevValue && checkboxGroup.registerValue && checkboxGroup.cancelValue) {
-      checkboxGroup.cancelValue(prevValue);
-      checkboxGroup.registerValue(value);
+    if (value !== prevValue) {
+      this.context?.cancelValue(prevValue);
+      this.context?.registerValue(value);
     }
   }
 
   componentWillUnmount() {
     const { value } = this.props;
-    const { checkboxGroup = {} } = this.context || {};
-    if (checkboxGroup.cancelValue) {
-      checkboxGroup.cancelValue(value);
-    }
+    this.context?.cancelValue(value);
   }
 
   saveCheckbox = (node: any) => {
@@ -116,7 +93,7 @@ class Checkbox extends React.Component<CheckboxProps, {}> {
     this.rcCheckbox.blur();
   }
 
-  renderCheckbox = ({ getPrefixCls }: ConfigConsumerProps) => {
+  renderCheckbox = ({ getPrefixCls, direction }: ConfigConsumerProps) => {
     const { props, context } = this;
     const {
       prefixCls: customizePrefixCls,
@@ -128,7 +105,7 @@ class Checkbox extends React.Component<CheckboxProps, {}> {
       onMouseLeave,
       ...restProps
     } = props;
-    const { checkboxGroup } = context;
+    const checkboxGroup = context;
     const prefixCls = getPrefixCls('checkbox', customizePrefixCls);
     const checkboxProps: CheckboxProps = { ...restProps };
     if (checkboxGroup) {
@@ -142,11 +119,15 @@ class Checkbox extends React.Component<CheckboxProps, {}> {
       checkboxProps.checked = checkboxGroup.value.indexOf(props.value) !== -1;
       checkboxProps.disabled = props.disabled || checkboxGroup.disabled;
     }
-    const classString = classNames(className, {
-      [`${prefixCls}-wrapper`]: true,
-      [`${prefixCls}-wrapper-checked`]: checkboxProps.checked,
-      [`${prefixCls}-wrapper-disabled`]: checkboxProps.disabled,
-    });
+    const classString = classNames(
+      {
+        [`${prefixCls}-wrapper`]: true,
+        [`${prefixCls}-rtl`]: direction === 'rtl',
+        [`${prefixCls}-wrapper-checked`]: checkboxProps.checked,
+        [`${prefixCls}-wrapper-disabled`]: checkboxProps.disabled,
+      },
+      className,
+    );
     const checkboxClass = classNames({
       [`${prefixCls}-indeterminate`]: indeterminate,
     });
@@ -173,7 +154,5 @@ class Checkbox extends React.Component<CheckboxProps, {}> {
     return <ConfigConsumer>{this.renderCheckbox}</ConfigConsumer>;
   }
 }
-
-polyfill(Checkbox);
 
 export default Checkbox;

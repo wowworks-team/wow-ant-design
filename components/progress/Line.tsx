@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { validProgress } from './utils';
-import { ProgressProps, ProgressGradient, StringGradients } from './progress';
+import { presetPrimaryColors } from '@ant-design/colors';
+import { ProgressGradient, ProgressProps, StringGradients } from './progress';
+import { validProgress, getSuccessPercent } from './utils';
 
 interface LineProps extends ProgressProps {
   prefixCls: string;
@@ -16,19 +17,17 @@ interface LineProps extends ProgressProps {
  *   '100%': '#ffffff'
  * }
  */
-export const sortGradient = (gradients: ProgressGradient) => {
-  let tempArr = [];
-  // eslint-disable-next-line no-restricted-syntax
-  for (const [key, value] of Object.entries(gradients)) {
-    const formatKey = parseFloat(key.replace(/%/g, ''));
-    if (isNaN(formatKey)) {
-      return {};
+export const sortGradient = (gradients: StringGradients) => {
+  let tempArr: any[] = [];
+  Object.keys(gradients).forEach(key => {
+    const formattedKey = parseFloat(key.replace(/%/g, ''));
+    if (!isNaN(formattedKey)) {
+      tempArr.push({
+        key: formattedKey,
+        value: gradients[key],
+      });
     }
-    tempArr.push({
-      key: formatKey,
-      value,
-    });
-  }
+  });
   tempArr = tempArr.sort((a, b) => a.key - b.key);
   return tempArr.map(({ key, value }) => `${value} ${key}%`).join(', ');
 };
@@ -49,7 +48,12 @@ export const sortGradient = (gradients: ProgressGradient) => {
  * Besides women, there is the code.
  */
 export const handleGradient = (strokeColor: ProgressGradient) => {
-  const { from = '#1890ff', to = '#1890ff', direction = 'to right', ...rest } = strokeColor;
+  const {
+    from = presetPrimaryColors.blue,
+    to = presetPrimaryColors.blue,
+    direction = 'to right',
+    ...rest
+  } = strokeColor;
   if (Object.keys(rest).length !== 0) {
     const sortedGradients = sortGradient(rest as StringGradients);
     return { backgroundImage: `linear-gradient(${direction}, ${sortedGradients})` };
@@ -57,50 +61,63 @@ export const handleGradient = (strokeColor: ProgressGradient) => {
   return { backgroundImage: `linear-gradient(${direction}, ${from}, ${to})` };
 };
 
-const Line: React.SFC<LineProps> = props => {
+const Line: React.FC<LineProps> = props => {
   const {
     prefixCls,
     percent,
-    successPercent,
     strokeWidth,
     size,
     strokeColor,
     strokeLinecap,
     children,
+    trailColor,
+    success,
   } = props;
-  let backgroundProps;
-  if (strokeColor && typeof strokeColor !== 'string') {
-    backgroundProps = handleGradient(strokeColor);
-  } else {
-    backgroundProps = {
-      background: strokeColor,
-    };
-  }
+
+  const backgroundProps =
+    strokeColor && typeof strokeColor !== 'string'
+      ? handleGradient(strokeColor)
+      : {
+          background: strokeColor,
+        };
+
+  const trailStyle = trailColor
+    ? {
+        backgroundColor: trailColor,
+      }
+    : undefined;
+
   const percentStyle = {
     width: `${validProgress(percent)}%`,
     height: strokeWidth || (size === 'small' ? 6 : 8),
     borderRadius: strokeLinecap === 'square' ? 0 : '',
     ...backgroundProps,
-  };
+  } as React.CSSProperties;
+
+  const successPercent = getSuccessPercent(props);
+
   const successPercentStyle = {
     width: `${validProgress(successPercent)}%`,
     height: strokeWidth || (size === 'small' ? 6 : 8),
     borderRadius: strokeLinecap === 'square' ? 0 : '',
-  };
+    backgroundColor: success?.strokeColor,
+  } as React.CSSProperties;
+
   const successSegment =
     successPercent !== undefined ? (
       <div className={`${prefixCls}-success-bg`} style={successPercentStyle} />
     ) : null;
+
   return (
-    <div>
+    <>
       <div className={`${prefixCls}-outer`}>
-        <div className={`${prefixCls}-inner`}>
+        <div className={`${prefixCls}-inner`} style={trailStyle}>
           <div className={`${prefixCls}-bg`} style={percentStyle} />
           {successSegment}
         </div>
       </div>
       {children}
-    </div>
+    </>
   );
 };
 

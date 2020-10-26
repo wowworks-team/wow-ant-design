@@ -16,8 +16,6 @@ Drag treeNode to insert after the other treeNode or insert into the other parent
 ```jsx
 import { Tree } from 'antd';
 
-const { TreeNode } = Tree;
-
 const x = 3;
 const y = 2;
 const z = 1;
@@ -68,14 +66,14 @@ class Demo extends React.Component {
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
 
     const loop = (data, key, callback) => {
-      data.forEach((item, index, arr) => {
-        if (item.key === key) {
-          return callback(item, index, arr);
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].key === key) {
+          return callback(data[i], i, data);
         }
-        if (item.children) {
-          return loop(item.children, key, callback);
+        if (data[i].children) {
+          loop(data[i].children, key, callback);
         }
-      });
+      }
     };
     const data = [...this.state.gData];
 
@@ -123,17 +121,6 @@ class Demo extends React.Component {
   };
 
   render() {
-    const loop = data =>
-      data.map(item => {
-        if (item.children && item.children.length) {
-          return (
-            <TreeNode key={item.key} title={item.title}>
-              {loop(item.children)}
-            </TreeNode>
-          );
-        }
-        return <TreeNode key={item.key} title={item.title} />;
-      });
     return (
       <Tree
         className="draggable-tree"
@@ -142,9 +129,8 @@ class Demo extends React.Component {
         blockNode
         onDragEnter={this.onDragEnter}
         onDrop={this.onDrop}
-      >
-        {loop(this.state.gData)}
-      </Tree>
+        treeData={this.state.gData}
+      />
     );
   }
 }

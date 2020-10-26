@@ -1,14 +1,15 @@
 import * as React from 'react';
 import Dialog from 'rc-dialog';
-import * as PropTypes from 'prop-types';
 import classNames from 'classnames';
 import addEventListener from 'rc-util/lib/Dom/addEventListener';
+import CloseOutlined from '@ant-design/icons/CloseOutlined';
+
+import useModal from './useModal';
 import { getConfirmLocale } from './locale';
-import Icon from '../icon';
 import Button from '../button';
-import { ButtonType, NativeButtonProps } from '../button/button';
+import { LegacyButtonType, ButtonProps, convertLegacyProps } from '../button/button';
 import LocaleReceiver from '../locale-provider/LocaleReceiver';
-import { ConfigConsumer, ConfigConsumerProps } from '../config-provider';
+import { ConfigContext } from '../config-provider';
 
 let mousePosition: { x: number; y: number } | null;
 export const destroyFns: Array<() => void> = [];
@@ -22,7 +23,9 @@ const getClickPosition = (e: MouseEvent) => {
   // 100ms 内发生过点击事件，则从点击位置动画展示
   // 否则直接 zoom 展示
   // 这样可以兼容非点击方式展开
-  setTimeout(() => (mousePosition = null), 100);
+  setTimeout(() => {
+    mousePosition = null;
+  }, 100);
 };
 
 // 只有点击事件支持从鼠标位置动画展开
@@ -53,15 +56,15 @@ export interface ModalProps {
   /** 确认按钮文字 */
   okText?: React.ReactNode;
   /** 确认按钮类型 */
-  okType?: ButtonType;
+  okType?: LegacyButtonType;
   /** 取消按钮文字 */
   cancelText?: React.ReactNode;
   /** 点击蒙层是否允许关闭 */
   maskClosable?: boolean;
   /** 强制渲染 Modal */
   forceRender?: boolean;
-  okButtonProps?: NativeButtonProps;
-  cancelButtonProps?: NativeButtonProps;
+  okButtonProps?: ButtonProps;
+  cancelButtonProps?: ButtonProps;
   destroyOnClose?: boolean;
   style?: React.CSSProperties;
   wrapClassName?: string;
@@ -90,17 +93,14 @@ export interface ModalFuncProps {
   // TODO: find out exact types
   onOk?: (...args: any[]) => any;
   onCancel?: (...args: any[]) => any;
-  okButtonProps?: NativeButtonProps;
-  cancelButtonProps?: NativeButtonProps;
+  okButtonProps?: ButtonProps;
+  cancelButtonProps?: ButtonProps;
   centered?: boolean;
   width?: string | number;
-  iconClassName?: string;
   okText?: React.ReactNode;
-  okType?: ButtonType;
+  okType?: LegacyButtonType;
   cancelText?: React.ReactNode;
   icon?: React.ReactNode;
-  /* Deprecated */
-  iconType?: string;
   mask?: boolean;
   maskClosable?: boolean;
   zIndex?: number;
@@ -113,14 +113,8 @@ export interface ModalFuncProps {
   autoFocusButton?: null | 'ok' | 'cancel';
   transitionName?: string;
   maskTransitionName?: string;
+  direction?: string;
 }
-
-export type ModalFunc = (
-  props: ModalFuncProps,
-) => {
-  destroy: () => void;
-  update: (newConfig: ModalFuncProps) => void;
-};
 
 export interface ModalLocale {
   okText: string;
@@ -128,123 +122,100 @@ export interface ModalLocale {
   justOkText: string;
 }
 
-export default class Modal extends React.Component<ModalProps, {}> {
-  static info: ModalFunc;
+interface ModalInterface extends React.FC<ModalProps> {
+  useModal: typeof useModal;
+}
 
-  static success: ModalFunc;
+const Modal: ModalInterface = props => {
+  const { getPopupContainer: getContextPopupContainer, getPrefixCls, direction } = React.useContext(
+    ConfigContext,
+  );
 
-  static error: ModalFunc;
-
-  static warn: ModalFunc;
-
-  static warning: ModalFunc;
-
-  static confirm: ModalFunc;
-
-  static destroyAll: () => void;
-
-  static defaultProps = {
-    width: 520,
-    transitionName: 'zoom',
-    maskTransitionName: 'fade',
-    confirmLoading: false,
-    visible: false,
-    okType: 'primary' as ButtonType,
-  };
-
-  static propTypes = {
-    prefixCls: PropTypes.string,
-    onOk: PropTypes.func,
-    onCancel: PropTypes.func,
-    okText: PropTypes.node,
-    cancelText: PropTypes.node,
-    centered: PropTypes.bool,
-    width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    confirmLoading: PropTypes.bool,
-    visible: PropTypes.bool,
-    footer: PropTypes.node,
-    title: PropTypes.node,
-    closable: PropTypes.bool,
-    closeIcon: PropTypes.node,
-  };
-
-  handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const { onCancel } = this.props;
+  const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const { onCancel } = props;
     if (onCancel) {
       onCancel(e);
     }
   };
 
-  handleOk = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const { onOk } = this.props;
+  const handleOk = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const { onOk } = props;
     if (onOk) {
       onOk(e);
     }
   };
 
-  renderFooter = (locale: ModalLocale) => {
-    const { okText, okType, cancelText, confirmLoading } = this.props;
+  const renderFooter = (locale: ModalLocale) => {
+    const { okText, okType, cancelText, confirmLoading } = props;
     return (
-      <div>
-        <Button onClick={this.handleCancel} {...this.props.cancelButtonProps}>
+      <>
+        <Button onClick={handleCancel} {...props.cancelButtonProps}>
           {cancelText || locale.cancelText}
         </Button>
         <Button
-          type={okType}
+          {...convertLegacyProps(okType)}
           loading={confirmLoading}
-          onClick={this.handleOk}
-          {...this.props.okButtonProps}
+          onClick={handleOk}
+          {...props.okButtonProps}
         >
           {okText || locale.okText}
         </Button>
-      </div>
+      </>
     );
   };
 
-  renderModal = ({
-    getPopupContainer: getContextPopupContainer,
-    getPrefixCls,
-  }: ConfigConsumerProps) => {
-    const {
-      prefixCls: customizePrefixCls,
-      footer,
-      visible,
-      wrapClassName,
-      centered,
-      getContainer,
-      closeIcon,
-      ...restProps
-    } = this.props;
+  const {
+    prefixCls: customizePrefixCls,
+    footer,
+    visible,
+    wrapClassName,
+    centered,
+    getContainer,
+    closeIcon,
+    ...restProps
+  } = props;
 
-    const prefixCls = getPrefixCls('modal', customizePrefixCls);
-    const defaultFooter = (
-      <LocaleReceiver componentName="Modal" defaultLocale={getConfirmLocale()}>
-        {this.renderFooter}
-      </LocaleReceiver>
-    );
+  const prefixCls = getPrefixCls('modal', customizePrefixCls);
+  const defaultFooter = (
+    <LocaleReceiver componentName="Modal" defaultLocale={getConfirmLocale()}>
+      {renderFooter}
+    </LocaleReceiver>
+  );
 
-    const closeIconToRender = (
-      <span className={`${prefixCls}-close-x`}>
-        {closeIcon || <Icon className={`${prefixCls}-close-icon`} type="close" />}
-      </span>
-    );
+  const closeIconToRender = (
+    <span className={`${prefixCls}-close-x`}>
+      {closeIcon || <CloseOutlined className={`${prefixCls}-close-icon`} />}
+    </span>
+  );
 
-    return (
-      <Dialog
-        {...restProps}
-        getContainer={getContainer === undefined ? getContextPopupContainer : getContainer}
-        prefixCls={prefixCls}
-        wrapClassName={classNames({ [`${prefixCls}-centered`]: !!centered }, wrapClassName)}
-        footer={footer === undefined ? defaultFooter : footer}
-        visible={visible}
-        mousePosition={mousePosition}
-        onClose={this.handleCancel}
-        closeIcon={closeIconToRender}
-      />
-    );
-  };
+  const wrapClassNameExtended = classNames(wrapClassName, {
+    [`${prefixCls}-centered`]: !!centered,
+    [`${prefixCls}-wrap-rtl`]: direction === 'rtl',
+  });
+  return (
+    <Dialog
+      {...restProps}
+      getContainer={getContainer === undefined ? getContextPopupContainer : getContainer}
+      prefixCls={prefixCls}
+      wrapClassName={wrapClassNameExtended}
+      footer={footer === undefined ? defaultFooter : footer}
+      visible={visible}
+      mousePosition={mousePosition}
+      onClose={handleCancel}
+      closeIcon={closeIconToRender}
+    />
+  );
+};
 
-  render() {
-    return <ConfigConsumer>{this.renderModal}</ConfigConsumer>;
-  }
-}
+Modal.useModal = useModal;
+
+Modal.defaultProps = {
+  width: 520,
+  transitionName: 'zoom',
+  maskTransitionName: 'fade',
+  confirmLoading: false,
+  visible: false,
+  okType: 'primary' as LegacyButtonType,
+};
+
+export default Modal;

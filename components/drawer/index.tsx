@@ -1,15 +1,15 @@
 import * as React from 'react';
 import RcDrawer from 'rc-drawer';
-import createReactContext from '@ant-design/create-react-context';
+import getScrollBarSize from 'rc-util/lib/getScrollBarSize';
+import CloseOutlined from '@ant-design/icons/CloseOutlined';
 import classNames from 'classnames';
 import omit from 'omit.js';
-import warning from '../_util/warning';
-import Icon from '../icon';
+
 import { ConfigConsumerProps } from '../config-provider';
-import { withConfigConsumer } from '../config-provider/context';
+import { withConfigConsumer, ConfigConsumer } from '../config-provider/context';
 import { tuple } from '../_util/type';
 
-const DrawerContext = createReactContext<Drawer | null>(null);
+const DrawerContext = React.createContext<Drawer | null>(null);
 
 type EventType =
   | React.KeyboardEvent<HTMLDivElement>
@@ -19,9 +19,15 @@ type getContainerFunc = () => HTMLElement;
 
 const PlacementTypes = tuple('top', 'right', 'bottom', 'left');
 type placementType = typeof PlacementTypes[number];
+
+export interface PushState {
+  distance: string | number;
+}
 export interface DrawerProps {
   closable?: boolean;
+  closeIcon?: React.ReactNode;
   destroyOnClose?: boolean;
+  forceRender?: boolean;
   getContainer?: string | HTMLElement | getContainerFunc | false;
   maskClosable?: boolean;
   mask?: boolean;
@@ -35,23 +41,24 @@ export interface DrawerProps {
   visible?: boolean;
   width?: number | string;
   height?: number | string;
-  /* deprecated, use className instead */
-  wrapClassName?: string;
   zIndex?: number;
   prefixCls?: string;
-  push?: boolean;
+  push?: boolean | PushState;
   placement?: placementType;
   onClose?: (e: EventType) => void;
   afterVisibleChange?: (visible: boolean) => void;
   className?: string;
   handler?: React.ReactNode;
   keyboard?: boolean;
+  footer?: React.ReactNode;
+  footerStyle?: React.CSSProperties;
 }
 
 export interface IDrawerState {
   push?: boolean;
 }
 
+const defaultPushState: PushState = { distance: 180 };
 class Drawer extends React.Component<DrawerProps & ConfigConsumerProps, IDrawerState> {
   static defaultProps = {
     width: 256,
@@ -62,6 +69,7 @@ class Drawer extends React.Component<DrawerProps & ConfigConsumerProps, IDrawerS
     mask: true,
     level: null,
     keyboard: true,
+    push: defaultPushState,
   };
 
   readonly state = {
@@ -101,15 +109,15 @@ class Drawer extends React.Component<DrawerProps & ConfigConsumerProps, IDrawerS
   }
 
   push = () => {
-    this.setState({
-      push: true,
-    });
+    if (this.props.push) {
+      this.setState({ push: true });
+    }
   };
 
   pull = () => {
-    this.setState({
-      push: false,
-    });
+    if (this.props.push) {
+      this.setState({ push: false });
+    }
   };
 
   onDestroyTransitionEnd = () => {
@@ -125,22 +133,54 @@ class Drawer extends React.Component<DrawerProps & ConfigConsumerProps, IDrawerS
 
   getDestroyOnClose = () => this.props.destroyOnClose && !this.props.visible;
 
+  getPushDistance = () => {
+    const { push } = this.props;
+    let distance: number | string;
+    if (typeof push === 'boolean') {
+      distance = push ? defaultPushState.distance : 0;
+    } else {
+      distance = push!.distance;
+    }
+    return parseFloat(String(distance || 0));
+  };
+
   // get drawer push width or height
   getPushTransform = (placement?: placementType) => {
+    const distance = this.getPushDistance();
+
     if (placement === 'left' || placement === 'right') {
-      return `translateX(${placement === 'left' ? 180 : -180}px)`;
+      return `translateX(${placement === 'left' ? distance : -distance}px)`;
     }
     if (placement === 'top' || placement === 'bottom') {
-      return `translateY(${placement === 'top' ? 180 : -180}px)`;
+      return `translateY(${placement === 'top' ? distance : -distance}px)`;
     }
   };
 
+  getOffsetStyle() {
+    const { placement, width, height, visible, mask } = this.props;
+    // https://github.com/ant-design/ant-design/issues/24287
+    if (!visible && !mask) {
+      return {};
+    }
+    const offsetStyle: any = {};
+    if (placement === 'left' || placement === 'right') {
+      offsetStyle.width = width;
+    } else {
+      offsetStyle.height = height;
+    }
+    return offsetStyle;
+  }
+
   getRcDrawerStyle = () => {
-    const { zIndex, placement, style } = this.props;
+    const { zIndex, placement, mask, style } = this.props;
     const { push } = this.state;
+    // 当无 mask 时，将 width 应用到外层容器上
+    // 解决 https://github.com/ant-design/ant-design/issues/12401 的问题
+    const offsetStyle = mask ? {} : this.getOffsetStyle();
     return {
       zIndex,
       transform: push ? this.getPushTransform(placement) : undefined,
+      ...offsetStyle,
       ...style,
     };
   };
@@ -160,13 +200,36 @@ class Drawer extends React.Component<DrawerProps & ConfigConsumerProps, IDrawerS
     );
   }
 
+  renderFooter() {
+    const { footer, footerStyle, prefixCls } = this.props;
+    if (!footer) {
+      return null;
+    }
+
+    const footerClassName = `${prefixCls}-footer`;
+    return (
+      <div className={footerClassName} style={footerStyle}>
+        {footer}
+      </div>
+    );
+  }
+
   renderCloseIcon() {
-    const { closable, prefixCls, onClose } = this.props;
+    const { closable, closeIcon = <CloseOutlined />, prefixCls, onClose } = this.props;
     return (
       closable && (
-        // eslint-disable-next-line react/button-has-type
-        <button onClick={onClose} aria-label="Close" className={`${prefixCls}-close`}>
-          <Icon type="close" />
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className={`${prefixCls}-close`}
+          style={
+            {
+              '--scroll-bar': `${getScrollBarSize()}px`,
+            } as any
+          }
+        >
+          {closeIcon}
         </button>
       )
     );
@@ -203,69 +266,89 @@ class Drawer extends React.Component<DrawerProps & ConfigConsumerProps, IDrawerS
         <div className={`${prefixCls}-body`} style={bodyStyle}>
           {this.props.children}
         </div>
+        {this.renderFooter()}
       </div>
     );
   };
 
   // render Provider for Multi-level drawer
   renderProvider = (value: Drawer) => {
-    const {
-      prefixCls,
-      placement,
-      className,
-      wrapClassName,
-      width,
-      height,
-      mask,
-      ...rest
-    } = this.props;
-    warning(
-      wrapClassName === undefined,
-      'Drawer',
-      'wrapClassName is deprecated, please use className instead.',
-    );
-    const haveMask = mask ? '' : 'no-mask';
     this.parentDrawer = value;
-    const offsetStyle: any = {};
-    if (placement === 'left' || placement === 'right') {
-      offsetStyle.width = width;
-    } else {
-      offsetStyle.height = height;
-    }
+
     return (
-      <DrawerContext.Provider value={this}>
-        <RcDrawer
-          handler={false}
-          {...omit(rest, [
-            'zIndex',
-            'style',
-            'closable',
-            'destroyOnClose',
-            'drawerStyle',
-            'headerStyle',
-            'bodyStyle',
-            'title',
-            'push',
-            'visible',
-            'getPopupContainer',
-            'rootPrefixCls',
-            'getPrefixCls',
-            'renderEmpty',
-            'csp',
-            'pageHeader',
-            'autoInsertSpaceInButton',
-          ])}
-          {...offsetStyle}
-          prefixCls={prefixCls}
-          open={this.props.visible}
-          showMask={mask}
-          placement={placement}
-          style={this.getRcDrawerStyle()}
-          className={classNames(wrapClassName, className, haveMask)}
-        >
-          {this.renderBody()}
-        </RcDrawer>
-      </DrawerContext.Provider>
+      <ConfigConsumer>
+        {({ getPopupContainer, getPrefixCls }) => {
+          const {
+            prefixCls: customizePrefixCls,
+            placement,
+            className,
+            mask,
+            direction,
+            visible,
+            ...rest
+          } = this.props;
+
+          const prefixCls = getPrefixCls('select', customizePrefixCls);
+          const drawerClassName = classNames(
+            {
+              'no-mask': !mask,
+              [`${prefixCls}-rtl`]: direction === 'rtl',
+            },
+            className,
+          );
+          const offsetStyle = mask ? this.getOffsetStyle() : {};
+
+          return (
+            <DrawerContext.Provider value={this}>
+              <RcDrawer
+                handler={false}
+                {...omit(rest, [
+                  'zIndex',
+                  'style',
+                  'closable',
+                  'closeIcon',
+                  'destroyOnClose',
+                  'drawerStyle',
+                  'headerStyle',
+                  'bodyStyle',
+                  'footerStyle',
+                  'footer',
+                  'locale',
+                  'title',
+                  'push',
+                  'visible',
+                  'getPopupContainer',
+                  'rootPrefixCls',
+                  'getPrefixCls',
+                  'renderEmpty',
+                  'csp',
+                  'pageHeader',
+                  'autoInsertSpaceInButton',
+                  'width',
+                  'height',
+                  'dropdownMatchSelectWidth',
+                  'getTargetContainer',
+                ])}
+                getContainer={
+                  // 有可能为 false，所以不能直接判断
+                  rest.getContainer === undefined && getPopupContainer
+                    ? () => getPopupContainer(document.body)
+                    : rest.getContainer
+                }
+                {...offsetStyle}
+                prefixCls={prefixCls}
+                open={visible}
+                showMask={mask}
+                placement={placement}
+                style={this.getRcDrawerStyle()}
+                className={drawerClassName}
+              >
+                {this.renderBody()}
+              </RcDrawer>
+            </DrawerContext.Provider>
+          );
+        }}
+      </ConfigConsumer>
     );
   };
 

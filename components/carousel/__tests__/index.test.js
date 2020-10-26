@@ -2,9 +2,11 @@ import React from 'react';
 import { mount } from 'enzyme';
 import Carousel from '..';
 import mountTest from '../../../tests/shared/mountTest';
+import rtlTest from '../../../tests/shared/rtlTest';
 
 describe('Carousel', () => {
   mountTest(Carousel);
+  rtlTest(Carousel);
 
   beforeEach(() => {
     jest.useFakeTimers();
@@ -84,6 +86,7 @@ describe('Carousel', () => {
 
   describe('should works for dotPosition', () => {
     ['left', 'right', 'top', 'bottom'].forEach(dotPosition => {
+      // eslint-disable-next-line jest/valid-title
       it(dotPosition, () => {
         const wrapper = mount(
           <Carousel dotPosition={dotPosition}>
@@ -93,19 +96,6 @@ describe('Carousel', () => {
         expect(wrapper.render()).toMatchSnapshot();
       });
     });
-  });
-
-  it('warning', () => {
-    const warnSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    mount(
-      <Carousel vertical>
-        <div />
-      </Carousel>,
-    );
-    expect(warnSpy).toHaveBeenCalledWith(
-      'Warning: [antd: Carousel] `vertical` is deprecated, please use `dotPosition` instead.',
-    );
-    warnSpy.mockRestore();
   });
 
   describe('should active when children change', () => {
@@ -129,12 +119,21 @@ describe('Carousel', () => {
         children: [<div key="1" />, <div key="2" />, <div key="3" />],
       });
       wrapper.update();
-      expect(
-        wrapper
-          .find('.slick-dots li')
-          .at(1)
-          .hasClass('slick-active'),
-      ).toBeTruthy();
+      expect(wrapper.find('.slick-dots li').at(1).hasClass('slick-active')).toBeTruthy();
+    });
+  });
+
+  describe('dots precise control by plain object', () => {
+    it('use dots to provide dotsClasse', () => {
+      const wrapper = mount(
+        <Carousel dots={{ className: 'customDots' }}>
+          <div>1</div>
+          <div>2</div>
+          <div>3</div>
+        </Carousel>,
+      );
+      wrapper.update();
+      expect(wrapper.find('.slick-dots').hasClass('customDots')).toBeTruthy();
     });
   });
 });

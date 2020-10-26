@@ -1,6 +1,6 @@
 ---
 order: 6
-iframe: 210
+iframe: 228
 title:
   zh-CN: 响应式
   en-US: responsive
@@ -62,11 +62,9 @@ const Content = ({ children, extra }) => {
 };
 
 ReactDOM.render(
-  <div>
+  <>
     <PageHeader
-      style={{
-        border: '1px solid rgb(235, 237, 240)',
-      }}
+      className="site-page-header-responsive"
       onBack={() => window.history.back()}
       title="Title"
       subTitle="This is a subtitle"
@@ -86,7 +84,7 @@ ReactDOM.render(
     >
       <Content extra={extraContent}>{renderContent()}</Content>
     </PageHeader>
-  </div>,
+  </>,
   mountNode,
 );
 ```

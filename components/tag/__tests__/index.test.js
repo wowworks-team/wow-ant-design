@@ -2,10 +2,13 @@ import React from 'react';
 import { mount } from 'enzyme';
 import Tag from '..';
 import mountTest from '../../../tests/shared/mountTest';
+import rtlTest from '../../../tests/shared/rtlTest';
 
 describe('Tag', () => {
   mountTest(Tag);
   mountTest(Tag.CheckableTag);
+  rtlTest(Tag);
+  rtlTest(Tag.CheckableTag);
 
   beforeAll(() => {
     jest.useFakeTimers();
@@ -37,6 +40,30 @@ describe('Tag', () => {
     wrapper.find('.anticon-close').simulate('click');
     jest.runAllTimers();
     expect(wrapper.find('.ant-tag:not(.ant-tag-hidden)').length).toBe(1);
+  });
+
+  it('should trigger onClick', () => {
+    const onClick = jest.fn();
+    const wrapper = mount(<Tag onClick={onClick} />);
+    wrapper.find('.ant-tag').simulate('click');
+    expect(onClick).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'click',
+        preventDefault: expect.any(Function),
+      }),
+    );
+  });
+
+  it('should trigger onClick on CheckableTag', () => {
+    const onClick = jest.fn();
+    const wrapper = mount(<Tag.CheckableTag onClick={onClick} />);
+    wrapper.find('.ant-tag').simulate('click');
+    expect(onClick).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'click',
+        preventDefault: expect.any(Function),
+      }),
+    );
   });
 
   // https://github.com/ant-design/ant-design/issues/20344

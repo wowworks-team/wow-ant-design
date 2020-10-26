@@ -3,6 +3,7 @@ type: Feedback
 category: Components
 subtitle:
 title: Drawer
+cover: https://gw.alipayobjects.com/zos/alicdn/7z8NJQhFb/Drawer.svg
 ---
 
 A panel which slides in from the edge of the screen.
@@ -19,29 +20,28 @@ A Drawer is a panel that is typically overlaid on top of a page and slides in fr
 
 | Props | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| closable | Whether a close (x) button is visible on top right of the Drawer dialog or not. | boolean | true | 3.7.0 |
-| destroyOnClose | Whether to unmount child components on closing drawer or not. | boolean | false | 3.7.0 |
-| getContainer | Return the mounted node for Drawer. | HTMLElement \| `() => HTMLElement` \| Selectors \| false | 'body' | 3.7.0 |
-| mask | Whether to show mask or not. | Boolean | true | 3.7.0 |
-| maskClosable | Clicking on the mask (area outside the Drawer) to close the Drawer or not. | boolean | true | 3.7.0 |
-| maskStyle | Style for Drawer's mask element. | object | {} | 3.7.0 |
-| style | Style of wrapper element which **contains mask** compare to `drawerStyle` | object | - | 3.7.0 |
-| drawerStyle | Style of the popup layer element | object | - | 3.24.0 |
-| headerStyle | Style of the drawer header part | object | - | 3.24.0 |
-| bodyStyle | Style of the drawer content part | object | - | 3.12.0 |
-| title | The title for Drawer. | string\|ReactNode | - | 3.7.0 |
-| visible | Whether the Drawer dialog is visible or not. | boolean | false | 3.7.0 |
-| width | Width of the Drawer dialog. | string\|number | 256 | 3.7.0 |
-| height | placement is `top` or `bottom`, height of the Drawer dialog. | string\|number | 256 | 3.9.0 |
-| className | The class name of the container of the Drawer dialog. | string | - | 3.8.0 |
-| zIndex | The `z-index` of the Drawer. | Number | 1000 | 3.7.0 |
-| placement | The placement of the Drawer. | 'top' \| 'right' \| 'bottom' \| 'left' | 'right' | 3.7.0 |
-| onClose | Specify a callback that will be called when a user clicks mask, close button or Cancel button. | function(e) | - | 3.7.0 |
-| afterVisibleChange | Callback after the animation ends when switching drawers. | function(visible) | - | 3.17.0 |
-| keyboard | Whether support press esc to close | Boolean | true | 3.19.8 |
-
-<style>
-#_hj_feedback_container {
-  display: none;
-}
-</style>
+| closable | Whether a close (x) button is visible on top right of the Drawer dialog or not | boolean | true |
+| closeIcon | Custom close icon | ReactNode | &lt;CloseOutlined /> |
+| destroyOnClose | Whether to unmount child components on closing drawer or not | boolean | false |
+| forceRender | Prerender Drawer component forcely | boolean | false |
+| getContainer | Return the mounted node for Drawer | HTMLElement \| () => HTMLElement \| Selectors \| false | body |
+| mask | Whether to show mask or not | boolean | true |
+| maskClosable | Clicking on the mask (area outside the Drawer) to close the Drawer or not | boolean | true |
+| maskStyle | Style for Drawer's mask element | CSSProperties | {} |
+| style | Style of wrapper element which **contains mask** compare to `drawerStyle` | CSSProperties | - |
+| drawerStyle | Style of the popup layer element | object | - |
+| headerStyle | Style of the drawer header part | object | - |
+| bodyStyle | Style of the drawer content part | object | - |
+| title | The title for Drawer | ReactNode | - |
+| visible | Whether the Drawer dialog is visible or not | boolean | false |
+| width | Width of the Drawer dialog | string \| number | 256 |
+| height | Placement is `top` or `bottom`, height of the Drawer dialog | string \| number | 256 |
+| className | The class name of the container of the Drawer dialog | string | - |
+| zIndex | The `z-index` of the Drawer | number | 1000 |
+| placement | The placement of the Drawer | `top` \| `right` \| `bottom` \| `left` | `right` |
+| onClose | Specify a callback that will be called when a user clicks mask, close button or Cancel button | function(e) | - |
+| afterVisibleChange | Callback after the animation ends when switching drawers | function(visible) | - |
+| keyboard | Whether support press esc to close | boolean | true |
+| footer | The footer for Drawer | ReactNode | - |
+| footerStyle | Style of the drawer footer part | CSSProperties | - |
+| push | Nested drawers push behavior | boolean \| { distance: string \| number } | { distance: 180 } | 4.5.0+ |

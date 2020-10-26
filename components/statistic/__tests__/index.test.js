@@ -6,17 +6,24 @@ import Statistic from '..';
 import { formatTimeStr } from '../utils';
 import { sleep } from '../../../tests/utils';
 import mountTest from '../../../tests/shared/mountTest';
+import rtlTest from '../../../tests/shared/rtlTest';
 
 describe('Statistic', () => {
   mountTest(Statistic);
   mountTest(Statistic.Countdown);
+  rtlTest(Statistic);
 
   beforeAll(() => {
-    MockDate.set(moment('2018-11-28 00:00:00'));
+    MockDate.set(moment('2018-11-28 00:00:00').valueOf());
   });
 
   afterAll(() => {
     MockDate.reset();
+  });
+
+  it('`-` is not a number', () => {
+    const wrapper = mount(<Statistic value="-" />);
+    expect(wrapper.find('.ant-statistic-content').text()).toEqual('-');
   });
 
   it('customize formatter', () => {
@@ -45,18 +52,13 @@ describe('Statistic', () => {
 
   describe('Countdown', () => {
     it('render correctly', () => {
-      const now = moment()
-        .add(2, 'd')
-        .add(11, 'h')
-        .add(28, 'm')
-        .add(9, 's')
-        .add(3, 'ms');
+      const now = moment().add(2, 'd').add(11, 'h').add(28, 'm').add(9, 's').add(3, 'ms');
 
       [
-        ['H:m', '59:28'],
-        ['HH:mm', '59:28'],
-        ['HH:mm', '59:28'],
-        ['DD-HH:mm', '02-11:28'],
+        ['H:m:s', '59:28:9'],
+        ['HH:mm:ss', '59:28:09'],
+        ['HH:mm:ss:SSS', '59:28:09:003'],
+        ['DD-HH:mm:ss', '02-11:28:09'],
       ].forEach(([format, value]) => {
         const wrapper = mount(<Statistic.Countdown format={format} value={now} />);
         expect(wrapper.find('.ant-statistic-content-value').text()).toEqual(value);
@@ -80,6 +82,28 @@ describe('Statistic', () => {
       expect(onFinish).not.toHaveBeenCalled();
     });
 
+    it('responses hover events', () => {
+      const onMouseEnter = jest.fn();
+      const onMouseLeave = jest.fn();
+      const wrapper = mount(<Statistic onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} />);
+      wrapper.simulate('mouseenter');
+      expect(onMouseEnter).toHaveBeenCalled();
+      wrapper.simulate('mouseleave');
+      expect(onMouseLeave).toHaveBeenCalled();
+    });
+
+    it('responses hover events for Countdown', () => {
+      const onMouseEnter = jest.fn();
+      const onMouseLeave = jest.fn();
+      const wrapper = mount(
+        <Statistic.Countdown onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} />,
+      );
+      wrapper.simulate('mouseenter');
+      expect(onMouseEnter).toHaveBeenCalled();
+      wrapper.simulate('mouseleave');
+      expect(onMouseLeave).toHaveBeenCalled();
+    });
+
     describe('time finished', () => {
       it('not call if time already passed', () => {
         const now = Date.now() - 1000;
@@ -100,7 +124,7 @@ describe('Statistic', () => {
         const wrapper = mount(<Statistic.Countdown value={now} onFinish={onFinish} />);
         wrapper.update();
 
-        MockDate.set(moment('2019-11-28 00:00:00'));
+        MockDate.set(moment('2019-11-28 00:00:00').valueOf());
         jest.runAllTimers();
 
         expect(onFinish).toHaveBeenCalled();

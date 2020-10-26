@@ -1,10 +1,23 @@
 import React from 'react';
 import { mount, render } from 'enzyme';
 import PageHeader from '..';
+import ConfigProvider from '../../config-provider';
 import mountTest from '../../../tests/shared/mountTest';
+import rtlTest from '../../../tests/shared/rtlTest';
 
 describe('PageHeader', () => {
   mountTest(PageHeader);
+  rtlTest(PageHeader);
+
+  const mockGetBoundingClientRect = jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect');
+
+  beforeAll(() => {
+    mockGetBoundingClientRect.mockReturnValue({ width: 100 });
+  });
+
+  afterAll(() => {
+    mockGetBoundingClientRect.mockRestore();
+  });
 
   it('pageHeader should not contain back it back', () => {
     const routes = [
@@ -87,5 +100,23 @@ describe('PageHeader', () => {
 
     wrapper.setProps({ onBack: () => {} });
     expect(wrapper.find('.ant-breadcrumb')).toHaveLength(1);
+  });
+
+  it('pageHeader should render correctly int RTL direction', () => {
+    const wrapper = mount(
+      <ConfigProvider direction="rtl">
+        <PageHeader title="Page Title" />
+      </ConfigProvider>,
+    );
+
+    expect(render(wrapper)).toMatchSnapshot();
+  });
+
+  it('change container width', async () => {
+    const wrapper = mount(<PageHeader title="Page Title" extra="extra" />);
+    wrapper.triggerResize();
+    await Promise.resolve();
+    wrapper.update();
+    expect(wrapper.find('.ant-page-header').hasClass('ant-page-header-compact')).toBe(true);
   });
 });

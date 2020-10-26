@@ -1,35 +1,23 @@
 import * as React from 'react';
-import { polyfill } from 'react-lifecycles-compat';
+import RcTextArea, { TextAreaProps as RcTextAreaProps, ResizableTextArea } from 'rc-textarea';
+import omit from 'omit.js';
+import classNames from 'classnames';
 import ClearableLabeledInput from './ClearableLabeledInput';
-import ResizableTextArea, { AutoSizeType } from './ResizableTextArea';
 import { ConfigConsumer, ConfigConsumerProps } from '../config-provider';
 import { fixControlledValue, resolveOnChange } from './Input';
 
-export type HTMLTextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
-
-export interface TextAreaProps extends HTMLTextareaProps {
-  prefixCls?: string;
-  /* deprecated, use autoSize instead */
-  autosize?: boolean | AutoSizeType;
-  autoSize?: boolean | AutoSizeType;
-  onPressEnter?: React.KeyboardEventHandler<HTMLTextAreaElement>;
+export interface TextAreaProps extends RcTextAreaProps {
   allowClear?: boolean;
-  verticalSize?: TextAreaSizeKeys;
+  bordered?: boolean;
+  showCount?: boolean;
+  maxLength?: number;
 }
 
 export interface TextAreaState {
   value: any;
+  /** `value` from prev props */
+  prevValue: any;
 }
-
-export enum TextAreaSizeKeys {
-  Default = 'default',
-}
-
-type TextAreaSizeMap = { [K in TextAreaSizeKeys]: number };
-
-const TextAreaSize: TextAreaSizeMap = {
-  [TextAreaSizeKeys.Default]: 4,
-};
 
 class TextArea extends React.Component<TextAreaProps, TextAreaState> {
   resizableTextArea: ResizableTextArea;
@@ -41,34 +29,35 @@ class TextArea extends React.Component<TextAreaProps, TextAreaState> {
     const value = typeof props.value === 'undefined' ? props.defaultValue : props.value;
     this.state = {
       value,
+      // eslint-disable-next-line react/no-unused-state
+      prevValue: props.value,
     };
   }
 
-  static getDerivedStateFromProps(nextProps: TextAreaProps) {
-    if ('value' in nextProps) {
-      return {
-        value: nextProps.value,
-      };
+  static getDerivedStateFromProps(nextProps: TextAreaProps, { prevValue }: TextAreaState) {
+    const newState: Partial<TextAreaState> = { prevValue: nextProps.value };
+    if (nextProps.value !== undefined || prevValue !== nextProps.value) {
+      newState.value = nextProps.value;
     }
-    return null;
+    return newState;
   }
 
   setValue(value: string, callback?: () => void) {
-    if (!('value' in this.props)) {
+    if (this.props.value === undefined) {
       this.setState({ value }, callback);
     }
   }
 
-  focus() {
+  focus = () => {
     this.resizableTextArea.textArea.focus();
-  }
+  };
 
   blur() {
     this.resizableTextArea.textArea.blur();
   }
 
-  saveTextArea = (resizableTextArea: ResizableTextArea) => {
-    this.resizableTextArea = resizableTextArea;
+  saveTextArea = (textarea: RcTextArea) => {
+    this.resizableTextArea = textarea?.resizableTextArea;
   };
 
   saveClearableInput = (clearableInput: ClearableLabeledInput) => {
@@ -76,70 +65,97 @@ class TextArea extends React.Component<TextAreaProps, TextAreaState> {
   };
 
   handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    this.setValue(e.target.value, () => {
-      this.resizableTextArea.resizeTextarea();
-    });
+    this.setValue(e.target.value);
     resolveOnChange(this.resizableTextArea.textArea, e, this.props.onChange);
-  };
-
-  handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    const { onPressEnter, onKeyDown } = this.props;
-    if (e.keyCode === 13 && onPressEnter) {
-      onPressEnter(e);
-    }
-    if (onKeyDown) {
-      onKeyDown(e);
-    }
   };
 
   handleReset = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     this.setValue('', () => {
-      this.resizableTextArea.renderTextArea();
       this.focus();
     });
     resolveOnChange(this.resizableTextArea.textArea, e, this.props.onChange);
   };
 
-  getRows = (): number => {
-    if (this.props.verticalSize) return TextAreaSize[this.props.verticalSize];
-    return TextAreaSize[TextAreaSizeKeys.Default];
-  };
+  renderTextArea = (prefixCls: string, bordered: boolean) => {
+    const { showCount, className, style } = this.props;
 
-  renderTextArea = (prefixCls: string) => {
     return (
-      <ResizableTextArea
-        {...this.props}
+      <RcTextArea
+        {...omit(this.props, ['allowClear', 'bordered', 'showCount'])}
+        className={classNames({
+          [`${prefixCls}-borderless`]: !bordered,
+          [className!]: className && !showCount,
+        })}
+        style={showCount ? null : style}
         prefixCls={prefixCls}
-        onKeyDown={this.handleKeyDown}
         onChange={this.handleChange}
         ref={this.saveTextArea}
-        rows={this.getRows()}
       />
     );
   };
 
-  renderComponent = ({ getPrefixCls }: ConfigConsumerProps) => {
-    const { value } = this.state;
-    const { prefixCls: customizePrefixCls } = this.props;
+  renderComponent = ({ getPrefixCls, direction }: ConfigConsumerProps) => {
+    let value = fixControlledValue(this.state?.value);
+    const {
+      prefixCls: customizePrefixCls,
+      bordered = true,
+      showCount = false,
+      maxLength,
+      className,
+      style,
+    } = this.props;
+
     const prefixCls = getPrefixCls('input', customizePrefixCls);
-    return (
+
+    // Max length value
+    const hasMaxLength = Number(maxLength) > 0;
+    value = hasMaxLength ? value.slice(0, maxLength) : value;
+
+    // TextArea
+    let textareaNode = (
       <ClearableLabeledInput
         {...this.props}
         prefixCls={prefixCls}
+        direction={direction}
         inputType="text"
-        value={fixControlledValue(value)}
-        element={this.renderTextArea(prefixCls)}
+        value={value}
+        element={this.renderTextArea(prefixCls, bordered)}
         handleReset={this.handleReset}
         ref={this.saveClearableInput}
+        triggerFocus={this.focus}
+        bordered={bordered}
       />
     );
+
+    // Only show text area wrapper when needed
+    if (showCount) {
+      const valueLength = [...value].length;
+      const dataCount = `${valueLength}${hasMaxLength ? ` / ${maxLength}` : ''}`;
+
+      textareaNode = (
+        <div
+          className={classNames(
+            `${prefixCls}-textarea`,
+            {
+              [`${prefixCls}-textarea-rtl`]: direction === 'rtl',
+            },
+            `${prefixCls}-textarea-show-count`,
+            className,
+          )}
+          style={style}
+          data-count={dataCount}
+        >
+          {textareaNode}
+        </div>
+      );
+    }
+
+    return textareaNode;
   };
 
   render() {
     return <ConfigConsumer>{this.renderComponent}</ConfigConsumer>;
   }
 }
-
-polyfill(TextArea);
 
 export default TextArea;
