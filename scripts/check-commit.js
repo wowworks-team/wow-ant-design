@@ -15,7 +15,9 @@ function exitProcess(code = 1) {
 }
 
 async function checkVersion() {
-  const { versions } = await fetch('http://registry.npmjs.org/antd').then(res => res.json());
+  const { versions } = await fetch('http://registry.npmjs.org/wowworks-antd').then(res =>
+    res.json(),
+  );
   if (version in versions) {
     console.log(chalk.yellow('😈 Current version already exists. Forget update package.json?'));
     console.log(chalk.cyan(' => Current:'), version);
@@ -42,8 +44,7 @@ async function checkCommit({ files }) {
 
 async function checkRemote() {
   const { remote } = await git.fetch('origin', 'master');
-  console.log(remote);
-  if (remote.indexOf('ant-design/ant-design') === -1) {
+  if (remote.indexOf('wowworks-team/wow-ant-design') === -1) {
     console.log(
       chalk.yellow('😓 Your remote origin is not ant-design/ant-design, did you fork it?'),
     );
