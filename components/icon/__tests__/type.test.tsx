@@ -1,12 +1,5 @@
-/* eslint-disable */
-import React from 'react';
-import Icon from '..';
-import { ReactComponent as logo } from './logo.svg';
+import { imageDemoTest } from '../../../tests/shared/imageTest';
 
-describe('Icon TypeScript test', () => {
-  it('empty test case placeholder to avoid jest error', () => {
-    // empty
-  });
+describe('Icon image', () => {
+  imageDemoTest('icon', { skip: ['basic.md'] });
 });
-
-<Icon component={logo} />;

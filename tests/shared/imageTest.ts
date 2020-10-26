@@ -45,3 +45,24 @@ export default function imageTest(component: React.ReactElement) {
     });
   });
 }
+
+type Options = {
+  skip?: boolean | string[];
+};
+
+// eslint-disable-next-line jest/no-export
+export function imageDemoTest(component: string, options: Options = {}) {
+  let testMethod = options.skip === true ? describe.skip : describe;
+  const files = glob.sync(`./components/${component}/demo/*.md`);
+
+  files.forEach(file => {
+    if (Array.isArray(options.skip) && options.skip.some(c => file.includes(c))) {
+      testMethod = test.skip;
+    }
+    testMethod(`Test ${file} image`, () => {
+      // eslint-disable-next-line global-require,import/no-dynamic-require
+      const demo = require(`../.${file}`).default;
+      imageTest(demo);
+    });
+  });
+}
