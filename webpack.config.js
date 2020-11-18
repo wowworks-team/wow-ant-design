@@ -59,7 +59,8 @@ function processWebpackThemeConfig(themeConfig, theme, vars) {
 
     // rename default entry to ${theme} entry
     Object.keys(config.entry).forEach(entryName => {
-      config.entry[entryName.replace('antd', `antd.${theme}`)] = config.entry[entryName];
+      config.entry[entryName.replace('wowworks-antd', `wowworks-antd.${theme}`)] =
+        config.entry[entryName];
       delete config.entry[entryName];
     });
 

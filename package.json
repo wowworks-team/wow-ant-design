@@ -43,7 +43,7 @@
   "scripts": {
     "api-collection": "antd-tools run api-collection",
     "authors": "node ./scripts/generate-authors",
-    "build": "npm run compile && NODE_OPTIONS='--max-old-space-size=4096' npm run dist",
+    "build": "bisheng build --ssr -c ./site/bisheng.config.js",
     "bundlesize": "bundlesize",
     "check-commit": "node ./scripts/check-commit",
     "prestart": "npm run version",
@@ -86,6 +86,7 @@
     "site:test": "jest --config .jest.site.js --cache=false",
     "test-image": "npm run compile:less && docker-compose run tests",
     "version": "node ./scripts/generate-version",
+    "firebase:deploy": "rimraf ./buildFile && npm run build && firebase deploy",
     "pre": "npm run dist && npm run compile"
   },
   "husky": {
