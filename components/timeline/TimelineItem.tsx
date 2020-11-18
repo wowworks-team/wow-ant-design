@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import omit from 'omit.js';
 import { ConfigContext } from '../config-provider';
 
-export interface TimelineItemProps {
+export interface TimeLineItemProps {
   prefixCls?: string;
   className?: string;
   color?: string;
@@ -14,13 +14,7 @@ export interface TimelineItemProps {
   label?: React.ReactNode;
 }
 
-// for compatibililty
-// https://github.com/ant-design/ant-design/pull/26832
-export interface TimeLineItemProps extends TimelineItemProps {
-  __deprecated_do_not_use_it__?: any; // eslint-disable-line camelcase
-}
-
-const TimelineItem: React.FC<TimelineItemProps> = props => {
+const TimelineItem: React.FC<TimeLineItemProps> = props => {
   const { getPrefixCls } = React.useContext(ConfigContext);
   const {
     prefixCls: customizePrefixCls,

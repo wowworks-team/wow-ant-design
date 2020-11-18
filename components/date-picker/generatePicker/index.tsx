@@ -36,7 +36,7 @@ export function getTimeProps<DateType>(
   const firstFormat = toArray(format)[0];
   const showTimeObj: SharedTimeProps<DateType> = { ...props };
 
-  if (firstFormat && typeof firstFormat === 'string') {
+  if (firstFormat) {
     if (!firstFormat.includes('s') && showSecond === undefined) {
       showTimeObj.showSecond = false;
     }
@@ -54,11 +54,6 @@ export function getTimeProps<DateType>(
 
   if (picker === 'time') {
     return showTimeObj;
-  }
-
-  if (typeof firstFormat === 'function') {
-    // format of showTime should use default when format is custom format function
-    delete showTimeObj.format;
   }
 
   return {
@@ -141,7 +136,7 @@ function generatePicker<DateType>(generateConfig: GenerateConfig<DateType>) {
   const RangePicker = generateRangePicker(generateConfig);
 
   // =========================== Export ===========================
-  type MergedDatePickerType = typeof DatePicker & {
+  type MergedDatePicker = typeof DatePicker & {
     WeekPicker: typeof WeekPicker;
     MonthPicker: typeof MonthPicker;
     YearPicker: typeof YearPicker;
@@ -150,7 +145,7 @@ function generatePicker<DateType>(generateConfig: GenerateConfig<DateType>) {
     QuarterPicker: typeof QuarterPicker;
   };
 
-  const MergedDatePicker = DatePicker as MergedDatePickerType;
+  const MergedDatePicker = DatePicker as MergedDatePicker;
   MergedDatePicker.WeekPicker = WeekPicker;
   MergedDatePicker.MonthPicker = MonthPicker;
   MergedDatePicker.YearPicker = YearPicker;

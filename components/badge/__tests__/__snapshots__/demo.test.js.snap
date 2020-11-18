@@ -2060,11 +2060,7 @@ exports[`renders ./components/badge/demo/ribbbon.md correctly 1`] = `
   <div
     class="ant-ribbon ant-ribbon-placement-end"
   >
-    <span
-      class="ant-ribbon-text"
-    >
-      Pushes open the window
-    </span>
+    Pushes open the window
     <div
       class="ant-ribbon-corner"
     />
@@ -2096,11 +2092,7 @@ exports[`renders ./components/badge/demo/ribbon-debug.md correctly 1`] = `
       <div
         class="ant-ribbon ant-ribbon-placement-end"
       >
-        <span
-          class="ant-ribbon-text"
-        >
-          啦啦啦啦
-        </span>
+        啦啦啦啦
         <div
           class="ant-ribbon-corner"
         />
@@ -2126,11 +2118,7 @@ exports[`renders ./components/badge/demo/ribbon-debug.md correctly 1`] = `
       <div
         class="ant-ribbon ant-ribbon-placement-end ant-ribbon-color-purple"
       >
-        <span
-          class="ant-ribbon-text"
-        >
-          啦啦啦啦
-        </span>
+        啦啦啦啦
         <div
           class="ant-ribbon-corner"
         />
@@ -2157,11 +2145,7 @@ exports[`renders ./components/badge/demo/ribbon-debug.md correctly 1`] = `
         class="ant-ribbon ant-ribbon-placement-end"
         style="background:#2db7f5"
       >
-        <span
-          class="ant-ribbon-text"
-        >
-          啦啦啦啦
-        </span>
+        啦啦啦啦
         <div
           class="ant-ribbon-corner"
           style="color:#2db7f5"
@@ -2189,11 +2173,7 @@ exports[`renders ./components/badge/demo/ribbon-debug.md correctly 1`] = `
         class="ant-ribbon ant-ribbon-placement-start"
         style="background:#2db7f5"
       >
-        <span
-          class="ant-ribbon-text"
-        >
-          啦啦啦啦
-        </span>
+        啦啦啦啦
         <div
           class="ant-ribbon-corner"
           style="color:#2db7f5"
@@ -2220,11 +2200,7 @@ exports[`renders ./components/badge/demo/ribbon-debug.md correctly 1`] = `
         class="ant-ribbon ant-ribbon-placement-end"
         style="background:#2db7f5"
       >
-        <span
-          class="ant-ribbon-text"
-        >
-          啦啦啦啦
-        </span>
+        啦啦啦啦
         <div
           class="ant-ribbon-corner"
           style="color:#2db7f5"

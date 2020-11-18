@@ -14,7 +14,7 @@ const locale: PickerLocale = {
   },
   dateFormat: 'DD-MM-YYYY',
   monthFormat: 'MM-YYYY',
-  dateTimeFormat: 'DD-MM-YYYY HH:mm',
+  dateTimeFormat: 'DD-MM-YYYY HH:mm:ss',
   weekFormat: 'wo-YYYY',
 };
 

@@ -22,7 +22,7 @@ const locale: PickerLocale = {
     yearFormat: 'YYYY',
     dateFormat: 'D.M.YYYY',
     dayFormat: 'D',
-    dateTimeFormat: 'D.M.YYYY HH:mm',
+    dateTimeFormat: 'D.M.YYYY HH:mm:ss',
     monthFormat: 'MMMM',
     monthBeforeYear: true,
     previousMonth: 'Prejšnji mesec (PageUp)',

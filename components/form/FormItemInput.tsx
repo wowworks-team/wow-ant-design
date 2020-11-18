@@ -4,11 +4,14 @@ import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
 import CloseCircleFilled from '@ant-design/icons/CloseCircleFilled';
 import CheckCircleFilled from '@ant-design/icons/CheckCircleFilled';
 import ExclamationCircleFilled from '@ant-design/icons/ExclamationCircleFilled';
+import useMemo from 'rc-util/lib/hooks/useMemo';
+import CSSMotion from 'rc-motion';
 
 import Col, { ColProps } from '../grid/col';
 import { ValidateStatus } from './FormItem';
-import { FormContext, FormItemPrefixContext } from './context';
-import ErrorList from './ErrorList';
+import { FormContext } from './context';
+import useCacheErrors from './hooks/useCacheErrors';
+import useForceUpdate from '../_util/hooks/useForceUpdate';
 
 interface FormItemInputMiscProps {
   prefixCls: string;
@@ -23,7 +26,6 @@ export interface FormItemInputProps {
   wrapperCol?: ColProps;
   help?: React.ReactNode;
   extra?: React.ReactNode;
-  status?: ValidateStatus;
 }
 
 const iconMap: { [key: string]: any } = {
@@ -35,7 +37,6 @@ const iconMap: { [key: string]: any } = {
 
 const FormItemInput: React.FC<FormItemInputProps & FormItemInputMiscProps> = ({
   prefixCls,
-  status,
   wrapperCol,
   children,
   help,
@@ -45,6 +46,8 @@ const FormItemInput: React.FC<FormItemInputProps & FormItemInputMiscProps> = ({
   validateStatus,
   extra,
 }) => {
+  const forceUpdate = useForceUpdate();
+
   const baseClassName = `${prefixCls}-item`;
 
   const formContext = React.useContext(FormContext);
@@ -53,11 +56,35 @@ const FormItemInput: React.FC<FormItemInputProps & FormItemInputMiscProps> = ({
 
   const className = classNames(`${baseClassName}-control`, mergedWrapperCol.className);
 
+  const [visible, cacheErrors] = useCacheErrors(
+    errors,
+    changedVisible => {
+      if (changedVisible) {
+        /**
+         * We trigger in sync to avoid dom shaking but this get warning in react 16.13.
+         * So use Promise to keep in micro async to handle this.
+         * https://github.com/ant-design/ant-design/issues/21698#issuecomment-593743485
+         */
+        Promise.resolve().then(() => {
+          onDomErrorVisibleChange(true);
+        });
+      }
+      forceUpdate();
+    },
+    !!help,
+  );
+
   React.useEffect(
     () => () => {
       onDomErrorVisibleChange(false);
     },
     [],
+  );
+
+  const memoErrors = useMemo(
+    () => cacheErrors,
+    visible,
+    (_, nextVisible) => nextVisible,
   );
 
   // Should provides additional icon if `hasFeedback`
@@ -81,13 +108,29 @@ const FormItemInput: React.FC<FormItemInputProps & FormItemInputMiscProps> = ({
           <div className={`${baseClassName}-control-input-content`}>{children}</div>
           {icon}
         </div>
-        <FormItemPrefixContext.Provider value={{ prefixCls, status }}>
-          <ErrorList
-            errors={errors}
-            help={help}
-            onDomErrorVisibleChange={onDomErrorVisibleChange}
-          />
-        </FormItemPrefixContext.Provider>
+        <CSSMotion
+          motionDeadline={500}
+          visible={visible}
+          motionName="show-help"
+          onLeaveEnd={() => {
+            onDomErrorVisibleChange(false);
+          }}
+          motionAppear
+          removeOnLeave
+        >
+          {({ className: motionClassName }: { className: string }) => {
+            return (
+              <div className={classNames(`${baseClassName}-explain`, motionClassName)} key="help">
+                {memoErrors.map((error, index) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <div key={index} role="alert">
+                    {error}
+                  </div>
+                ))}
+              </div>
+            );
+          }}
+        </CSSMotion>
         {extra && <div className={`${baseClassName}-extra`}>{extra}</div>}
       </Col>
     </FormContext.Provider>

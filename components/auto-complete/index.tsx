@@ -46,7 +46,7 @@ const AutoComplete: React.ForwardRefRenderFunction<Select, AutoCompleteProps> = 
   React.useImperativeHandle<Select, Select>(ref, () => selectRef.current!);
 
   // ============================= Input =============================
-  let customizeInput: React.ReactElement | undefined;
+  let customizeInput: React.ReactElement;
 
   if (
     childNodes.length === 1 &&
@@ -56,7 +56,7 @@ const AutoComplete: React.ForwardRefRenderFunction<Select, AutoCompleteProps> = 
     [customizeInput] = childNodes;
   }
 
-  const getInputElement = customizeInput ? (): React.ReactElement => customizeInput! : undefined;
+  const getInputElement = (): React.ReactElement => customizeInput;
 
   // ============================ Options ============================
   let optionChildren: React.ReactNode;
@@ -131,10 +131,10 @@ const AutoComplete: React.ForwardRefRenderFunction<Select, AutoCompleteProps> = 
 
 const RefAutoComplete = React.forwardRef<Select, AutoCompleteProps>(AutoComplete);
 
-type RefAutoCompleteWithOption = typeof RefAutoComplete & {
+type RefAutoComplete = typeof RefAutoComplete & {
   Option: OptionType;
 };
 
-(RefAutoComplete as RefAutoCompleteWithOption).Option = Option;
+(RefAutoComplete as RefAutoComplete).Option = Option;
 
-export default RefAutoComplete as RefAutoCompleteWithOption;
+export default RefAutoComplete as RefAutoComplete;

@@ -1,6 +1,6 @@
 import Timeline from './Timeline';
 
 export { TimelineProps } from './Timeline';
-export { TimelineItemProps } from './TimelineItem';
+export { TimeLineItemProps } from './TimelineItem';
 
 export default Timeline;

@@ -482,17 +482,17 @@ Array [
     class="ant-tag"
   >
     Tag1
-    <span
+    <div
       class="ant-tag-close-icon"
     >
       关 闭
-    </span>
+    </div>
   </span>,
   <span
     class="ant-tag"
   >
     Tag2
-    <span
+    <div
       class="ant-tag-close-icon"
     >
       <span
@@ -518,7 +518,7 @@ Array [
           />
         </svg>
       </span>
-    </span>
+    </div>
   </span>,
 ]
 `;
@@ -642,17 +642,10 @@ Array [
 
 exports[`renders ./components/tag/demo/status.md correctly 1`] = `
 Array [
-  <div
-    class="ant-divider ant-divider-horizontal ant-divider-with-text ant-divider-with-text-left"
-    role="separator"
-  >
-    <span
-      class="ant-divider-inner-text"
-    >
-      Without icon
-    </span>
-  </div>,
   <div>
+    <h4>
+      Without icon
+    </h4>
     <span
       class="ant-tag ant-tag-success"
     >
@@ -679,17 +672,10 @@ Array [
       default
     </span>
   </div>,
-  <div
-    class="ant-divider ant-divider-horizontal ant-divider-with-text ant-divider-with-text-left"
-    role="separator"
-  >
-    <span
-      class="ant-divider-inner-text"
-    >
-      With icon
-    </span>
-  </div>,
   <div>
+    <h4>
+      With icon
+    </h4>
     <span
       class="ant-tag ant-tag-success"
     >

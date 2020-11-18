@@ -84,7 +84,7 @@ const columns = [
 | getPopupContainer | The render container of dropdowns in table | (triggerNode) => HTMLElement | () => TableHtmlElement |  |
 | sortDirections | Supported sort way, could be `ascend`, `descend` | Array | \[`ascend`, `descend`] |  |
 | showSorterTooltip | The header show next sorter direction tooltip | boolean | true |  |
-| sticky | Set sticky header and scroll bar | boolean \| `{offsetHeader?: number, offsetScroll?: number, getContainer?: () => HTMLElement}` | - | 4.6.0 (getContainer: 4.7.0) |
+| sticky | Set sticky header and scroll bar | boolean \| `{offsetHeader?: number, offsetScroll?: number}` | - | 4.6.0 |
 
 #### onRow usage
 
@@ -140,16 +140,16 @@ One of the Table `columns` prop for describing the table's columns, Column has t
 | title | Title of this column | ReactNode \| ({ sortOrder, sortColumn, filters }) => ReactNode | - |  |
 | width | Width of this column ([width not working?](https://github.com/ant-design/ant-design/issues/13825#issuecomment-449889241)) | string \| number | - |  |
 | onCell | Set props on per cell | function(record, rowIndex) | - |  |
-| onFilter | Function that determines if the row is displayed when filtered | function(value, record) => boolean | - |  |
+| onFilter | Callback executed when the confirm filter button is clicked | function | - |  |
 | onFilterDropdownVisibleChange | Callback executed when `filterDropdownVisible` is changed | function(visible) {} | - |  |
 | onHeaderCell | Set props on per header cell | function(column) | - |  |
 | showSorterTooltip | If header show next sorter direction tooltip, override `showSorterTooltip` in table | boolean | true |  |
 
 ### ColumnGroup
 
-| Property | Description               | Type      | Default |
-| -------- | ------------------------- | --------- | ------- |
-| title    | Title of the column group | ReactNode | -       |
+| Property | Description               | Type                | Default |
+| -------- | ------------------------- | ------------------- | ------- |
+| title    | Title of the column group | string \| ReactNode | -       |
 
 ### pagination
 
@@ -189,7 +189,7 @@ Properties for row selection.
 | --- | --- | --- | --- | --- |
 | checkStrictly | Check table row precisely; parent row and children rows are not associated | boolean | true | 4.4.0 |
 | columnWidth | Set the width of the selection column | string \| number | `60px` |  |
-| columnTitle | Set the title of the selection column | ReactNode | - |  |
+| columnTitle | Set the title of the selection column | string \| ReactNode | - |  |
 | fixed | Fixed selection column on the left | boolean | - |  |
 | getCheckboxProps | Get Checkbox or Radio props | function(record) | - |  |
 | hideSelectAll | Hide the selectAll checkbox and custom selection | boolean | false | 4.3.0 |
@@ -216,7 +216,7 @@ Properties for row selection.
 | Property | Description | Type | Default |
 | --- | --- | --- | --- |
 | key | Unique key of this selection | string | - |
-| text | Display text of this selection | ReactNode | - |
+| text | Display text of this selection | string \| ReactNode | - |
 | onSelect | Callback executed when this selection is clicked | function(changeableRowKeys) | - |
 
 ## Using in TypeScript

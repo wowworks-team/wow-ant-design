@@ -48,7 +48,7 @@ const Ribbon: React.FC<RibbonProps> = function Ribbon({
     <div className={`${prefixCls}-wrapper`}>
       {children}
       <div className={ribbonCls} style={{ ...colorStyle, ...style }}>
-        <span className={`${prefixCls}-text`}>{text}</span>
+        {text}
         <div className={`${prefixCls}-corner`} style={cornerColorStyle} />
       </div>
     </div>

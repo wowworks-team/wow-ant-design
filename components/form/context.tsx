@@ -5,7 +5,6 @@ import { FormProviderProps as RcFormProviderProps } from 'rc-field-form/lib/Form
 import { ColProps } from '../grid/col';
 import { FormLabelAlign } from './interface';
 import { RequiredMark } from './Form';
-import { ValidateStatus } from './FormItem';
 
 /**
  * Form Context
@@ -50,15 +49,3 @@ export const FormProvider: React.FC<FormProviderProps> = props => {
   const providerProps = omit(props, ['prefixCls']);
   return <RcFormProvider {...providerProps} />;
 };
-
-/**
- * Used for ErrorList only
- */
-export interface FormItemPrefixContextProps {
-  prefixCls: string;
-  status?: ValidateStatus;
-}
-
-export const FormItemPrefixContext = React.createContext<FormItemPrefixContextProps>({
-  prefixCls: '',
-});

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import InternalRadio from './radio';
 import Group from './group';
 import Button from './radioButton';

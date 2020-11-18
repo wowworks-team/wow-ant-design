@@ -9,8 +9,6 @@ import { fixControlledValue, resolveOnChange } from './Input';
 export interface TextAreaProps extends RcTextAreaProps {
   allowClear?: boolean;
   bordered?: boolean;
-  showCount?: boolean;
-  maxLength?: number;
 }
 
 export interface TextAreaState {
@@ -77,16 +75,15 @@ class TextArea extends React.Component<TextAreaProps, TextAreaState> {
   };
 
   renderTextArea = (prefixCls: string, bordered: boolean) => {
-    const { showCount, className, style } = this.props;
-
     return (
       <RcTextArea
-        {...omit(this.props, ['allowClear', 'bordered', 'showCount'])}
-        className={classNames({
-          [`${prefixCls}-borderless`]: !bordered,
-          [className!]: className && !showCount,
-        })}
-        style={showCount ? null : style}
+        {...omit(this.props, ['allowClear', 'bordered'])}
+        className={classNames(
+          {
+            [`${prefixCls}-borderless`]: !bordered,
+          },
+          this.props.className,
+        )}
         prefixCls={prefixCls}
         onChange={this.handleChange}
         ref={this.saveTextArea}
@@ -95,30 +92,16 @@ class TextArea extends React.Component<TextAreaProps, TextAreaState> {
   };
 
   renderComponent = ({ getPrefixCls, direction }: ConfigConsumerProps) => {
-    let value = fixControlledValue(this.state?.value);
-    const {
-      prefixCls: customizePrefixCls,
-      bordered = true,
-      showCount = false,
-      maxLength,
-      className,
-      style,
-    } = this.props;
-
+    const { value } = this.state;
+    const { prefixCls: customizePrefixCls, bordered = true } = this.props;
     const prefixCls = getPrefixCls('input', customizePrefixCls);
-
-    // Max length value
-    const hasMaxLength = Number(maxLength) > 0;
-    value = hasMaxLength ? value.slice(0, maxLength) : value;
-
-    // TextArea
-    let textareaNode = (
+    return (
       <ClearableLabeledInput
         {...this.props}
         prefixCls={prefixCls}
         direction={direction}
         inputType="text"
-        value={value}
+        value={fixControlledValue(value)}
         element={this.renderTextArea(prefixCls, bordered)}
         handleReset={this.handleReset}
         ref={this.saveClearableInput}
@@ -126,31 +109,6 @@ class TextArea extends React.Component<TextAreaProps, TextAreaState> {
         bordered={bordered}
       />
     );
-
-    // Only show text area wrapper when needed
-    if (showCount) {
-      const valueLength = [...value].length;
-      const dataCount = `${valueLength}${hasMaxLength ? ` / ${maxLength}` : ''}`;
-
-      textareaNode = (
-        <div
-          className={classNames(
-            `${prefixCls}-textarea`,
-            {
-              [`${prefixCls}-textarea-rtl`]: direction === 'rtl',
-            },
-            `${prefixCls}-textarea-show-count`,
-            className,
-          )}
-          style={style}
-          data-count={dataCount}
-        >
-          {textareaNode}
-        </div>
-      );
-    }
-
-    return textareaNode;
   };
 
   render() {

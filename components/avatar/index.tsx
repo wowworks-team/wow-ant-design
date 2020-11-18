@@ -1,4 +1,3 @@
-import * as React from 'react';
 import InternalAvatar, { AvatarProps } from './avatar';
 import Group from './group';
 

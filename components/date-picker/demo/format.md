@@ -24,10 +24,6 @@ const monthFormat = 'YYYY/MM';
 
 const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
 
-const customFormat = value => {
-  return `custom format: ${value.format(dateFormat)}`;
-};
-
 ReactDOM.render(
   <Space direction="vertical" size={12}>
     <DatePicker defaultValue={moment('2015/01/01', dateFormat)} format={dateFormat} />
@@ -37,7 +33,6 @@ ReactDOM.render(
       defaultValue={[moment('2015/01/01', dateFormat), moment('2015/01/01', dateFormat)]}
       format={dateFormat}
     />
-    <DatePicker defaultValue={moment('2015/01/01', dateFormat)} format={customFormat} />
   </Space>,
   mountNode,
 );

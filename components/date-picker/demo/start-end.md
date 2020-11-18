@@ -77,7 +77,7 @@ class DateRange extends React.Component {
         <DatePicker
           disabledDate={this.disabledStartDate}
           showTime
-          format="YYYY-MM-DD HH:mm"
+          format="YYYY-MM-DD HH:mm:ss"
           value={startValue}
           placeholder="Start"
           onChange={this.onStartChange}
@@ -86,7 +86,7 @@ class DateRange extends React.Component {
         <DatePicker
           disabledDate={this.disabledEndDate}
           showTime
-          format="YYYY-MM-DD HH:mm"
+          format="YYYY-MM-DD HH:mm:ss"
           value={endValue}
           placeholder="End"
           onChange={this.onEndChange}

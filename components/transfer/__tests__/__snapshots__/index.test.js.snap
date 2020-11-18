@@ -1165,7 +1165,7 @@ exports[`Transfer should support render value and label in item 1`] = `
               className="ant-transfer-list-header-selected"
             >
               1
-
+               
               item
             </span>
             <span
@@ -1871,7 +1871,7 @@ exports[`Transfer should support render value and label in item 1`] = `
               className="ant-transfer-list-header-selected"
             >
               0
-
+               
               item
             </span>
             <span

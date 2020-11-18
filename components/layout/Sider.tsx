@@ -20,7 +20,7 @@ const dimensionMaxMap = {
 
 export interface SiderContextProps {
   siderCollapsed?: boolean;
-  collapsedWidth?: number | string;
+  collapsedWidth?: string | number;
 }
 
 export const SiderContext: React.Context<SiderContextProps> = React.createContext({});
@@ -108,11 +108,7 @@ class InternalSider extends React.Component<InternalSideProps, SiderState> {
 
   componentDidMount() {
     if (this.mql) {
-      try {
-        this.mql.addEventListener('change', this.responsiveHandler);
-      } catch (error) {
-        this.mql.addListener(this.responsiveHandler);
-      }
+      this.mql.addListener(this.responsiveHandler);
       this.responsiveHandler(this.mql);
     }
 
@@ -120,11 +116,7 @@ class InternalSider extends React.Component<InternalSideProps, SiderState> {
   }
 
   componentWillUnmount() {
-    try {
-      this.mql?.removeEventListener('change', this.responsiveHandler);
-    } catch (error) {
-      this.mql?.removeListener(this.responsiveHandler);
-    }
+    this?.mql?.removeListener(this.responsiveHandler as any);
     this.props?.siderHook.removeSider(this.uniqueId);
   }
 

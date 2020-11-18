@@ -81,10 +81,10 @@ describe('CheckboxGroup', () => {
     ];
 
     const wrapper = mount(<Checkbox.Group options={options} />);
-    expect(wrapper.find('.ant-checkbox-checked').length).toBe(0);
+
+    expect(wrapper.instance().state.value).toEqual([]);
     wrapper.setProps({ value: ['Apple'] });
-    wrapper.update();
-    expect(wrapper.find('.ant-checkbox-checked').length).toBe(1);
+    expect(wrapper.instance().state.value).toEqual(['Apple']);
   });
 
   // https://github.com/ant-design/ant-design/issues/12642
@@ -170,8 +170,8 @@ describe('CheckboxGroup', () => {
     );
     wrapper.find('.ant-collapse-item').at(0).find('.ant-collapse-header').simulate('click');
     wrapper.find('.ant-checkbox-input').at(0).simulate('change');
-    expect(wrapper.find('.ant-checkbox-checked').length).toBe(1);
+    expect(wrapper.find(Checkbox.Group).at(0).state('value')).toEqual(['1']);
     wrapper.find('.ant-checkbox-input').at(0).simulate('change');
-    expect(wrapper.find('.ant-checkbox-checked').length).toBe(0);
+    expect(wrapper.find(Checkbox.Group).at(0).state('value')).toEqual([]);
   });
 });

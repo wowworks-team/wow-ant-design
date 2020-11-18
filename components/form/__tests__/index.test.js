@@ -136,7 +136,6 @@ describe('Form', () => {
       "Warning: [antd: Form.Item] `shouldUpdate` and `dependencies` shouldn't be used together. See https://ant.design/components/form/#dependencies.",
     );
   });
-
   it('`name` should not work with render props', () => {
     mount(
       <Form>
@@ -149,7 +148,6 @@ describe('Form', () => {
       "Warning: [antd: Form.Item] Do not use `name` with `children` of render props since it's not a field.",
     );
   });
-
   it('children is array has name props', () => {
     mount(
       <Form>
@@ -437,24 +435,6 @@ describe('Form', () => {
     expect(wrapper.find('.ant-form-item-explain').text()).toEqual('help');
   });
 
-  it('clear validation message when ', async () => {
-    const wrapper = mount(
-      <Form>
-        <Form.Item name="username" rules={[{ required: true, message: 'message' }]}>
-          <Input />
-        </Form.Item>
-      </Form>,
-    );
-    await change(wrapper, 0, '1');
-    expect(wrapper.find('.ant-form-item-explain').length).toBeFalsy();
-    await change(wrapper, 0, '');
-    expect(wrapper.find('.ant-form-item-explain').length).toBeTruthy();
-    await change(wrapper, 0, '123');
-    await sleep(800);
-    wrapper.update();
-    expect(wrapper.find('.ant-form-item-explain').length).toBeFalsy();
-  });
-
   // https://github.com/ant-design/ant-design/issues/21167
   it('`require` without `name`', () => {
     const wrapper = mount(
@@ -548,23 +528,6 @@ describe('Form', () => {
       // eslint-disable-next-line no-template-curly-in-string
       <Form validateMessages={{ required: '${label} is good!' }}>
         <Form.Item name="test" label="Bamboo" rules={[{ required: true }]}>
-          <input />
-        </Form.Item>
-      </Form>,
-    );
-
-    wrapper.find('form').simulate('submit');
-    await sleep(100);
-    wrapper.update();
-    await sleep(100);
-    expect(wrapper.find('.ant-form-item-explain').first().text()).toEqual('Bamboo is good!');
-  });
-
-  it('`messageVariables` support validate', async () => {
-    const wrapper = mount(
-      // eslint-disable-next-line no-template-curly-in-string
-      <Form validateMessages={{ required: '${label} is good!' }}>
-        <Form.Item name="test" messageVariables={{ label: 'Bamboo' }} rules={[{ required: true }]}>
           <input />
         </Form.Item>
       </Form>,
@@ -770,33 +733,5 @@ describe('Form', () => {
     );
 
     expect(wrapper.find('form').hasClass('ant-form-hide-required-mark')).toBeTruthy();
-  });
-
-  describe('tooltip', () => {
-    it('ReactNode', () => {
-      const wrapper = mount(
-        <Form>
-          <Form.Item label="light" tooltip={<span>Bamboo</span>}>
-            <Input />
-          </Form.Item>
-        </Form>,
-      );
-
-      const tooltipProps = wrapper.find('Tooltip').props();
-      expect(tooltipProps.title).toEqual(<span>Bamboo</span>);
-    });
-
-    it('config', () => {
-      const wrapper = mount(
-        <Form>
-          <Form.Item label="light" tooltip={{ title: 'Bamboo' }}>
-            <Input />
-          </Form.Item>
-        </Form>,
-      );
-
-      const tooltipProps = wrapper.find('Tooltip').props();
-      expect(tooltipProps.title).toEqual('Bamboo');
-    });
   });
 });

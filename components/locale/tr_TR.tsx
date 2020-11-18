@@ -75,7 +75,6 @@ const localeValues: Locale = {
     back: 'Geri',
   },
   Form: {
-    optional: '(opsiyonel)',
     defaultValidateMessages: {
       default: 'Alan doğrulama hatası ${label}',
       required: '${label} gerekli bir alan',

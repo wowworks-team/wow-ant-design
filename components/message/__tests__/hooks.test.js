@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React from 'react';
 import { mount } from 'enzyme';
-import message, { getInstance } from '..';
+import message from '..';
 import ConfigProvider from '../../config-provider';
 
 describe('message.hooks', () => {
@@ -171,7 +171,7 @@ describe('message.hooks', () => {
     expect(document.querySelectorAll('.my-test-message-notice').length).toBe(1);
     hide();
     jest.runAllTimers();
-    expect(getInstance().component.state.notices).toHaveLength(0);
+    expect(document.querySelectorAll('.my-test-message-notice').length).toBe(0);
   });
 
   it('should be same hook', () => {

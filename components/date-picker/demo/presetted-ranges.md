@@ -39,7 +39,7 @@ ReactDOM.render(
         'This Month': [moment().startOf('month'), moment().endOf('month')],
       }}
       showTime
-      format="YYYY/MM/DD HH:mm"
+      format="YYYY/MM/DD HH:mm:ss"
       onChange={onChange}
     />
   </Space>,

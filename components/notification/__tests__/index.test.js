@@ -1,15 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { UserOutlined } from '@ant-design/icons';
-import notification, { getInstance } from '..';
+import notification from '..';
 
 describe('notification', () => {
-  beforeEach(() => {
+  beforeAll(() => {
     jest.useFakeTimers();
   });
 
-  afterEach(() => {
+  afterAll(() => {
     jest.useRealTimers();
+  });
+
+  afterEach(() => {
     notification.destroy();
   });
 
@@ -51,18 +54,14 @@ describe('notification', () => {
 
     await Promise.resolve();
     expect(document.querySelectorAll('.ant-notification-notice').length).toBe(2);
-
     notification.close('1');
+    await Promise.resolve();
     jest.runAllTimers();
-    expect((await getInstance('ant-notification-topRight')).component.state.notices).toHaveLength(
-      1,
-    );
-
+    expect(document.querySelectorAll('.ant-notification-notice').length).toBe(1);
     notification.close('2');
+    await Promise.resolve();
     jest.runAllTimers();
-    expect((await getInstance('ant-notification-topRight')).component.state.notices).toHaveLength(
-      0,
-    );
+    expect(document.querySelectorAll('.ant-notification-notice').length).toBe(0);
   });
 
   it('should be able to destroy globally', async () => {

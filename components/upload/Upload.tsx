@@ -43,7 +43,6 @@ const InternalUpload: React.ForwardRefRenderFunction<unknown, UploadProps> = (pr
     type,
     children,
     style,
-    itemRender,
   } = props;
 
   const [dragState, setDragState] = React.useState<string>('drop');
@@ -262,7 +261,6 @@ const InternalUpload: React.ForwardRefRenderFunction<unknown, UploadProps> = (pr
               isImageUrl={isImageUrl}
               progress={progress}
               appendAction={button}
-              itemRender={itemRender}
             />
           );
         }}

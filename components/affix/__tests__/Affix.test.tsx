@@ -186,7 +186,7 @@ describe('Affix Render', () => {
     it.each([
       { name: 'inner', index: 0 },
       { name: 'outer', index: 1 },
-    ])('inner or outer', async ({ index }) => {
+    ])(name, async ({ index }) => {
       document.body.innerHTML = '<div id="mounter" />';
 
       const updateCalled = jest.fn();

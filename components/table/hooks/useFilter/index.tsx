@@ -70,7 +70,7 @@ function injectFilter<RecordType>(
     const columnPos = getColumnPos(index, pos);
     const { filterMultiple = true } = column as ColumnType<RecordType>;
 
-    if (column.filters || column.filterDropdown) {
+    if (column.filters || 'filterDropdown' in column) {
       const columnKey = getColumnKey(column, columnPos);
       const filterState = filterStates.find(({ key }) => columnKey === key);
 
