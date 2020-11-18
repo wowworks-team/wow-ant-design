@@ -1,6 +1,5 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import { spyElementPrototype } from 'rc-util/lib/test/domHook';
 import Popconfirm from '..';
 import mountTest from '../../../tests/shared/mountTest';
 import { sleep } from '../../../tests/utils';
@@ -13,12 +12,6 @@ describe('Popconfirm', () => {
   const eventObject = expect.objectContaining({
     target: expect.anything(),
     preventDefault: expect.any(Function),
-  });
-
-  beforeAll(() => {
-    spyElementPrototype(HTMLElement, 'offsetParent', {
-      get: () => ({}),
-    });
   });
 
   it('should popup Popconfirm dialog', () => {

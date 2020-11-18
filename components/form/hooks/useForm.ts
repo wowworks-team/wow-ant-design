@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useRef, useMemo } from 'react';
 import { useForm as useRcForm, FormInstance as RcFormInstance } from 'rc-field-form';
 import scrollIntoView from 'scroll-into-view-if-needed';
 import { ScrollOptions, NamePath, InternalNamePath } from '../interface';
@@ -23,9 +23,9 @@ function toNamePathStr(name: NamePath) {
 
 export default function useForm<Values = any>(form?: FormInstance<Values>): [FormInstance<Values>] {
   const [rcForm] = useRcForm();
-  const itemsRef = React.useRef<Record<string, React.ReactElement>>({});
+  const itemsRef = useRef<Record<string, React.ReactElement>>({});
 
-  const wrapForm: FormInstance<Values> = React.useMemo(
+  const wrapForm: FormInstance<Values> = useMemo(
     () =>
       form || {
         ...rcForm,

@@ -13,36 +13,35 @@ When requiring users to interact with the application, but without jumping to a 
 
 ## API
 
-| Property | Description | Type | Default | Version |
-| --- | --- | --- | --- | --- |
-| afterClose | Specify a function that will be called when modal is closed completely | function | - |  |
-| bodyStyle | Body style for modal body element. Such as height, padding etc | CSSProperties | {} |  |
-| cancelText | Text of the Cancel button | ReactNode | `Cancel` |  |
-| cancelButtonProps | The cancel button props | [ButtonProps](/components/button/#API) | - |  |
-| centered | Centered Modal | boolean | false |  |
-| closable | Whether a close (x) button is visible on top right of the modal dialog or not | boolean | true |  |
-| closeIcon | Custom close icon | ReactNode | &lt;CloseOutlined /> |  |
-| confirmLoading | Whether to apply loading visual effect for OK button or not | boolean | false |  |
-| destroyOnClose | Whether to unmount child components on onClose | boolean | false |  |
-| footer | Footer content, set as `footer={null}` when you don't need default buttons | ReactNode | (OK and Cancel buttons) |  |
-| forceRender | Force render Modal | boolean | false |  |
-| getContainer | Return the mount node for Modal | HTMLElement \| () => HTMLElement \| Selectors \| false | document.body |  |
-| keyboard | Whether support press esc to close | boolean | true |  |
-| mask | Whether show mask or not | boolean | true |  |
-| maskClosable | Whether to close the modal dialog when the mask (area outside the modal) is clicked | boolean | true |  |
-| maskStyle | Style for modal's mask element | object | {} |  |
-| modalRender | Custom modal content render | (node: ReactNode) => ReactNode | - | 4.7.0 |
-| okButtonProps | The ok button props | [ButtonProps](/components/button/#API) | - |  |
-| okText | Text of the OK button | ReactNode | `OK` |  |
-| okType | Button `type` of the OK button | string | `primary` |  |
-| onCancel | Specify a function that will be called when a user clicks mask, close button on top right or Cancel button | function(e) | - |  |
-| onOk | Specify a function that will be called when a user clicks the OK button | function(e) | - |  |
-| style | Style of floating layer, typically used at least for adjusting the position | CSSProperties | - |  |
-| title | The modal dialog's title | ReactNode | - |  |
-| visible | Whether the modal dialog is visible or not | boolean | false |  |
-| width | Width of the modal dialog | string \| number | 520 |  |
-| wrapClassName | The class name of the container of the modal dialog | string | - |  |
-| zIndex | The `z-index` of the Modal | number | 1000 |  |
+| Property | Description | Type | Default |
+| --- | --- | --- | --- |
+| afterClose | Specify a function that will be called when modal is closed completely | function | - |
+| bodyStyle | Body style for modal body element. Such as height, padding etc | CSSProperties | {} |
+| cancelText | Text of the Cancel button | string \| ReactNode | `Cancel` |
+| cancelButtonProps | The cancel button props | [ButtonProps](/components/button/#API) | - |
+| centered | Centered Modal | boolean | false |
+| closable | Whether a close (x) button is visible on top right of the modal dialog or not | boolean | true |
+| closeIcon | Custom close icon | ReactNode | &lt;CloseOutlined /> |
+| confirmLoading | Whether to apply loading visual effect for OK button or not | boolean | false |
+| destroyOnClose | Whether to unmount child components on onClose | boolean | false |
+| footer | Footer content, set as `footer={null}` when you don't need default buttons | string \| ReactNode | (OK and Cancel buttons) |
+| forceRender | Force render Modal | boolean | false |
+| getContainer | Return the mount node for Modal | HTMLElement \| () => HTMLElement \| Selectors \| false | document.body |
+| keyboard | Whether support press esc to close | boolean | true |
+| mask | Whether show mask or not | boolean | true |
+| maskClosable | Whether to close the modal dialog when the mask (area outside the modal) is clicked | boolean | true |
+| maskStyle | Style for modal's mask element | object | {} |
+| okButtonProps | The ok button props | [ButtonProps](/components/button/#API) | - |
+| okText | Text of the OK button | string \| ReactNode | `OK` |
+| okType | Button `type` of the OK button | string | `primary` |
+| onCancel | Specify a function that will be called when a user clicks mask, close button on top right or Cancel button | function(e) | - |
+| onOk | Specify a function that will be called when a user clicks the OK button | function(e) | - |
+| style | Style of floating layer, typically used at least for adjusting the position | CSSProperties | - |
+| title | The modal dialog's title | string \| ReactNode | - |
+| visible | Whether the modal dialog is visible or not | boolean | false |
+| width | Width of the modal dialog | string \| number | 520 |
+| wrapClassName | The class name of the container of the modal dialog | string | - |
+| zIndex | The `z-index` of the Modal | number | 1000 |
 
 #### Note
 
@@ -69,7 +68,7 @@ The items listed above are all functions, expecting a settings object as paramet
 | cancelText | Text of the Cancel button with Modal.confirm | string | `Cancel` |  |
 | centered | Centered Modal | boolean | false |  |
 | className | The className of container | string | - |  |
-| content | Content | ReactNode | - |  |
+| content | Content | string \| ReactNode | - |  |
 | getContainer | Return the mount node for Modal | HTMLElement \| () => HTMLElement \| Selectors \| false | document.body |  |
 | icon | Custom icon | ReactNode | &lt;QuestionCircle /> | 3.12.0 |
 | keyboard | Whether support press esc to close | boolean | true |  |
@@ -82,7 +81,7 @@ The items listed above are all functions, expecting a settings object as paramet
 | onCancel | Specify a function that will be called when the user clicks the Cancel button. The parameter of this function is a function whose execution should include closing the dialog. You can also just return a promise and when the promise is resolved, the modal dialog will also be closed | function(close) | - |  |
 | onOk | Specify a function that will be called when the user clicks the OK button. The parameter of this function is a function whose execution should include closing the dialog. You can also just return a promise and when the promise is resolved, the modal dialog will also be closed | function(close) | - |  |
 | style | Style of floating layer, typically used at least for adjusting the position | CSSProperties | - |  |
-| title | Title | ReactNode | - |  |
+| title | Title | string \| ReactNode | - |  |
 | width | Width of the modal dialog | string \| number | 416 |  |
 | zIndex | The `z-index` of the Modal | number | 1000 |  |
 
@@ -163,7 +162,3 @@ return (
 ```
 
 **Note:** You must insert `contextHolder` into your children with hooks. You can use origin method if you do not need context connection.
-
-### How to disable motion?
-
-You can config `transitionName=""` and `maskTransitionName=""` to remove motion class. But you should note that these prop is internal usage which we don't promise exist in next major version.

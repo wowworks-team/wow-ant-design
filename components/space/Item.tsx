@@ -15,7 +15,6 @@ export interface ItemProps {
   direction?: 'horizontal' | 'vertical';
   size?: SizeType | number;
   marginDirection: 'marginLeft' | 'marginRight';
-  split?: string | React.ReactNode;
 }
 
 export default function Item({
@@ -25,7 +24,6 @@ export default function Item({
   size,
   marginDirection,
   children,
-  split,
 }: ItemProps) {
   const latestIndex = React.useContext(LastIndexContext);
 
@@ -33,24 +31,19 @@ export default function Item({
     return null;
   }
 
-  const style =
-    index >= latestIndex
-      ? {}
-      : {
-          [direction === 'vertical' ? 'marginBottom' : marginDirection]:
-            ((typeof size === 'string' ? spaceSize[size] : size) ?? 0) / (split ? 2 : 1),
-        };
-
   return (
-    <>
-      <div className={className} style={style}>
-        {children}
-      </div>
-      {index < latestIndex && split && (
-        <span className={`${className}-split`} style={style}>
-          {split}
-        </span>
-      )}
-    </>
+    <div
+      className={className}
+      style={
+        index >= latestIndex
+          ? {}
+          : {
+              [direction === 'vertical' ? 'marginBottom' : marginDirection]:
+                typeof size === 'string' ? spaceSize[size] : size,
+            }
+      }
+    >
+      {children}
+    </div>
   );
 }

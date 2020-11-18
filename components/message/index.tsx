@@ -193,7 +193,7 @@ function isArgsProps(content: JointContent): content is ArgsProps {
 const api: any = {
   open: notice,
   config: setMessageConfig,
-  destroy(messageKey?: React.Key) {
+  destroy(messageKey?: number | string) {
     if (messageInstance) {
       if (messageKey) {
         const { removeNotice } = messageInstance;
@@ -243,13 +243,8 @@ export interface MessageInstance {
 export interface MessageApi extends MessageInstance {
   warn(content: JointContent, duration?: ConfigDuration, onClose?: ConfigOnClose): MessageType;
   config(options: ConfigOptions): void;
-  destroy(messageKey?: React.Key): void;
+  destroy(): void;
   useMessage(): [MessageInstance, React.ReactElement];
 }
-
-/** @private test only function. Not work on production */
-export const getInstance = () => {
-  return process.env.NODE_ENV === 'test' ? messageInstance : null;
-};
 
 export default api as MessageApi;

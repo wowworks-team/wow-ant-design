@@ -147,8 +147,7 @@
     transform-origin: 0 0;
 
     // https://github.com/ant-design/ant-design/issues/22244
-    // https://github.com/ant-design/ant-design/issues/26812
-    &:not([class*='-active']) {
+    &:not(.zoom-big-enter-active):not(.zoom-big-leave-active) {
       overflow-x: hidden;
       overflow-y: auto;
     }
@@ -483,7 +482,7 @@
       > .@{menu-prefix-cls}-submenu-title,
     > .@{menu-prefix-cls}-submenu > .@{menu-prefix-cls}-submenu-title {
       left: 0;
-      padding: 0 ~'calc(50% - @{menu-icon-size-lg} / 2)';
+      padding: 0 (@menu-collapsed-width - @menu-icon-size-lg) / 2;
       text-overflow: clip;
       .@{menu-prefix-cls}-submenu-arrow {
         display: none;

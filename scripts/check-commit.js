@@ -55,13 +55,13 @@ async function checkRemote() {
 async function checkAll() {
   const status = await git.status();
 
-  await checkVersion();
-
-  await checkBranch(status);
-
-  await checkCommit(status);
-
-  await checkRemote();
+  // await checkVersion();
+  //
+  // await checkBranch(status);
+  //
+  // await checkCommit(status);
+  //
+  // await checkRemote();
 }
 
 checkAll();

@@ -84,10 +84,6 @@ export interface CascaderProps {
   placeholder?: string;
   /** 输入框大小，可选 `large` `default` `small` */
   size?: SizeType;
-  /** 输入框name */
-  name?: string;
-  /** 输入框id */
-  id?: string;
   /** whether has border style */
   bordered?: boolean;
   /** 禁用 */
@@ -642,19 +638,12 @@ class Cascader extends React.Component<CascaderProps, CascaderState> {
         );
 
         const getPopupContainer = props.getPopupContainer || getContextPopupContainer;
-        const rest = omit(props, [
-          'inputIcon',
-          'expandIcon',
-          'loadingIcon',
-          'bordered',
-          'className',
-        ]);
+        const rest = omit(props, ['inputIcon', 'expandIcon', 'loadingIcon', 'bordered']);
         const rcCascaderPopupClassName = classNames(popupClassName, {
           [`${prefixCls}-menu-${direction}`]: direction === 'rtl',
           [`${prefixCls}-menu-empty`]:
             options.length === 1 && options[0].value === 'ANT_CASCADER_NOT_FOUND',
         });
-
         return (
           <RcCascader
             {...rest}

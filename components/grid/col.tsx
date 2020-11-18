@@ -1,7 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import RowContext from './RowContext';
-import { ConfigContext } from '../config-provider';
+import { ConfigConsumer, ConfigConsumerProps } from '../config-provider';
 
 // https://github.com/ant-design/ant-design/issues/14324
 type ColSpanType = number | string;
@@ -46,89 +46,93 @@ function parseFlex(flex: FlexType): string {
 }
 
 const Col = React.forwardRef<HTMLDivElement, ColProps>((props, ref) => {
-  const { getPrefixCls, direction } = React.useContext(ConfigContext);
-  const { gutter } = React.useContext(RowContext);
+  const renderCol = ({ getPrefixCls, direction }: ConfigConsumerProps) => {
+    const {
+      prefixCls: customizePrefixCls,
+      span,
+      order,
+      offset,
+      push,
+      pull,
+      className,
+      children,
+      flex,
+      style,
+      ...others
+    } = props;
+    const prefixCls = getPrefixCls('col', customizePrefixCls);
+    let sizeClassObj = {};
+    ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'].forEach(size => {
+      let sizeProps: ColSize = {};
+      const propSize = (props as any)[size];
+      if (typeof propSize === 'number') {
+        sizeProps.span = propSize;
+      } else if (typeof propSize === 'object') {
+        sizeProps = propSize || {};
+      }
 
-  const {
-    prefixCls: customizePrefixCls,
-    span,
-    order,
-    offset,
-    push,
-    pull,
-    className,
-    children,
-    flex,
-    style,
-    ...others
-  } = props;
+      delete (others as any)[size];
 
-  const prefixCls = getPrefixCls('col', customizePrefixCls);
+      sizeClassObj = {
+        ...sizeClassObj,
+        [`${prefixCls}-${size}-${sizeProps.span}`]: sizeProps.span !== undefined,
+        [`${prefixCls}-${size}-order-${sizeProps.order}`]: sizeProps.order || sizeProps.order === 0,
+        [`${prefixCls}-${size}-offset-${sizeProps.offset}`]:
+          sizeProps.offset || sizeProps.offset === 0,
+        [`${prefixCls}-${size}-push-${sizeProps.push}`]: sizeProps.push || sizeProps.push === 0,
+        [`${prefixCls}-${size}-pull-${sizeProps.pull}`]: sizeProps.pull || sizeProps.pull === 0,
+        [`${prefixCls}-rtl`]: direction === 'rtl',
+      };
+    });
+    const classes = classNames(
+      prefixCls,
+      {
+        [`${prefixCls}-${span}`]: span !== undefined,
+        [`${prefixCls}-order-${order}`]: order,
+        [`${prefixCls}-offset-${offset}`]: offset,
+        [`${prefixCls}-push-${push}`]: push,
+        [`${prefixCls}-pull-${pull}`]: pull,
+      },
+      className,
+      sizeClassObj,
+    );
 
-  let sizeClassObj = {};
-  (['xs', 'sm', 'md', 'lg', 'xl', 'xxl'] as const).forEach(size => {
-    let sizeProps: ColSize = {};
-    const propSize = props[size];
-    if (typeof propSize === 'number') {
-      sizeProps.span = propSize;
-    } else if (typeof propSize === 'object') {
-      sizeProps = propSize || {};
-    }
-
-    delete others[size];
-
-    sizeClassObj = {
-      ...sizeClassObj,
-      [`${prefixCls}-${size}-${sizeProps.span}`]: sizeProps.span !== undefined,
-      [`${prefixCls}-${size}-order-${sizeProps.order}`]: sizeProps.order || sizeProps.order === 0,
-      [`${prefixCls}-${size}-offset-${sizeProps.offset}`]:
-        sizeProps.offset || sizeProps.offset === 0,
-      [`${prefixCls}-${size}-push-${sizeProps.push}`]: sizeProps.push || sizeProps.push === 0,
-      [`${prefixCls}-${size}-pull-${sizeProps.pull}`]: sizeProps.pull || sizeProps.pull === 0,
-      [`${prefixCls}-rtl`]: direction === 'rtl',
-    };
-  });
-
-  const classes = classNames(
-    prefixCls,
-    {
-      [`${prefixCls}-${span}`]: span !== undefined,
-      [`${prefixCls}-order-${order}`]: order,
-      [`${prefixCls}-offset-${offset}`]: offset,
-      [`${prefixCls}-push-${push}`]: push,
-      [`${prefixCls}-pull-${pull}`]: pull,
-    },
-    className,
-    sizeClassObj,
-  );
-
-  let mergedStyle: React.CSSProperties = { ...style };
-  if (gutter) {
-    mergedStyle = {
-      ...(gutter[0]! > 0
-        ? {
-            paddingLeft: gutter[0]! / 2,
-            paddingRight: gutter[0]! / 2,
+    return (
+      <RowContext.Consumer>
+        {({ gutter }) => {
+          let mergedStyle: React.CSSProperties = { ...style };
+          if (gutter) {
+            mergedStyle = {
+              ...(gutter[0]! > 0
+                ? {
+                    paddingLeft: gutter[0]! / 2,
+                    paddingRight: gutter[0]! / 2,
+                  }
+                : {}),
+              ...(gutter[1]! > 0
+                ? {
+                    paddingTop: gutter[1]! / 2,
+                    paddingBottom: gutter[1]! / 2,
+                  }
+                : {}),
+              ...mergedStyle,
+            };
           }
-        : {}),
-      ...(gutter[1]! > 0
-        ? {
-            paddingTop: gutter[1]! / 2,
-            paddingBottom: gutter[1]! / 2,
+          if (flex) {
+            mergedStyle.flex = parseFlex(flex);
           }
-        : {}),
-      ...mergedStyle,
-    };
-  }
-  if (flex) {
-    mergedStyle.flex = parseFlex(flex);
-  }
 
-  return (
-    <div {...others} style={mergedStyle} className={classes} ref={ref}>
-      {children}
-    </div>
-  );
+          return (
+            <div {...others} style={mergedStyle} className={classes} ref={ref}>
+              {children}
+            </div>
+          );
+        }}
+      </RowContext.Consumer>
+    );
+  };
+
+  return <ConfigConsumer>{renderCol}</ConfigConsumer>;
 });
 
 Col.displayName = 'Col';

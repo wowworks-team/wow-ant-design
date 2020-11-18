@@ -10,15 +10,15 @@
     "clear": "Clear",
     "month": "Month",
     "year": "Year",
-    "timeSelect": "Time",
-    "dateSelect": "Date",
+    "timeSelect": "Select time",
+    "dateSelect": "Select date",
     "monthSelect": "Choose a month",
     "yearSelect": "Choose a year",
     "decadeSelect": "Choose a decade",
     "yearFormat": "YYYY",
     "dateFormat": "M/D/YYYY",
     "dayFormat": "D",
-    "dateTimeFormat": "M/D/YYYY HH:mm",
+    "dateTimeFormat": "M/D/YYYY HH:mm:ss",
     "monthFormat": "MMMM",
     "monthBeforeYear": true,
     "previousMonth": "Previous month (PageUp)",
@@ -31,10 +31,10 @@
     "nextCentury": "Next century"
   },
   "timePickerLocale": {
-    "placeholder": "Time"
+    "placeholder": "Select time"
   },
   "dateFormat": "YYYY-MM-DD",
-  "dateTimeFormat": "YYYY-MM-DD HH:mm",
+  "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
   "weekFormat": "YYYY-wo",
   "monthFormat": "YYYY-MM"
 }

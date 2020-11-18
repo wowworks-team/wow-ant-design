@@ -24,7 +24,7 @@ Ant Design has 3 types of Tabs for different situations.
 | --- | --- | --- | --- | --- |
 | addIcon | Customize add icon | ReactNode | - | 4.4.0 |
 | activeKey | Current TabPane's key | string | - |  |
-| animated | Whether to change tabs with animation. Only works while `tabPosition="top" | boolean \| { inkBar: boolean, tabPane: boolean } | `{ inkBar: true, tabPane: false }` |  |
+| animated | Whether to change tabs with animation. Only works while `tabPosition="top" | "bottom"` | boolean \| {inkBar: boolean, tabPane: boolean} | false |  |
 | renderTabBar | Replace the TabBar | (props: DefaultTabBarProps, DefaultTabBar: React.ComponentClass) => React.ReactElement | - |  |
 | defaultActiveKey | Initial active TabPane's key, if `activeKey` is not set | string | - |  |
 | hideAdd | Hide plus icon or not. Only works while `type="editable-card"` | boolean | false |  |
@@ -49,7 +49,7 @@ More option at [rc-tabs option](https://github.com/react-component/tabs#tabs)
 | --- | --- | --- | --- |
 | forceRender | Forced render of content in tabs, not lazy render after clicking on tabs | boolean | false |
 | key | TabPane's key | string | - |
-| tab | Show text in TabPane's head | ReactNode | - |
+| tab | Show text in TabPane's head | string \| ReactNode | - |
 | closeIcon | Customize close icon in TabPane's head. Only works while `type="editable-card"` | ReactNode | - |
 
 More option at [rc-tabs option](https://github.com/react-component/tabs#tabpane)

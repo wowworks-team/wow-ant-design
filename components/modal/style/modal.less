@@ -1,7 +1,5 @@
 @dialog-prefix-cls: ~'@{ant-prefix}-modal';
 @table-prefix-cls: ~'@{ant-prefix}-table';
-@modal-footer-padding-vertical: 8px;
-@modal-footer-padding-horizontal: 16px;
 
 .@{dialog-prefix-cls} {
   .reset-component;
@@ -20,9 +18,9 @@
   &-title {
     margin: 0;
     color: @modal-heading-color;
-    font-size: @heading-2-size;
-    font-family: 'PTSans-Bold', sans-serif;
-    line-height: 30px;
+    font-weight: 500;
+    font-size: @modal-header-title-font-size;
+    line-height: @modal-header-title-line-height;
     word-wrap: break-word;
   }
 
@@ -38,8 +36,8 @@
 
   &-close {
     position: absolute;
-    top: 30px;
-    right: @modal-right-left-padding;
+    top: 0;
+    right: 0;
     z-index: @zindex-popup-close;
     padding: 0;
     color: @modal-close-color;
@@ -54,8 +52,11 @@
 
     &-x {
       display: block;
-      font-size: @heading-4-size + 2px;
+      width: @modal-header-close-size;
+      height: @modal-header-close-size;
+      font-size: @font-size-lg;
       font-style: normal;
+      line-height: @modal-header-close-size;
       text-align: center;
       text-transform: none;
       text-rendering: auto;
@@ -69,7 +70,7 @@
   }
 
   &-header {
-    padding: @modal-body-padding @modal-right-left-padding;
+    padding: @modal-header-padding;
     color: @text-color;
     background: @modal-header-bg;
     border-bottom: @modal-header-border-width @modal-header-border-style
@@ -78,14 +79,14 @@
   }
 
   &-body {
-    padding: @modal-body-padding @modal-right-left-padding;
+    padding: @modal-body-padding;
     font-size: @font-size-base;
     line-height: @line-height-base;
     word-wrap: break-word;
   }
 
   &-footer {
-    padding: @modal-body-padding @modal-right-left-padding;
+    padding: @modal-footer-padding-vertical @modal-footer-padding-horizontal;
     text-align: right;
     background: @modal-footer-bg;
     border-top: @modal-footer-border-width @modal-footer-border-style

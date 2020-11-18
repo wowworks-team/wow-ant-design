@@ -4,7 +4,7 @@ import TransitionEvents from '@ant-design/css-animation/lib/Event';
 import raf from './raf';
 import { ConfigConsumer, ConfigConsumerProps, CSPConfig, ConfigContext } from '../config-provider';
 
-let styleForPseudo: HTMLStyleElement | null;
+let styleForPesudo: HTMLStyleElement | null;
 
 // Where el is the DOM element you'd like to test for visibility
 function isHidden(element: HTMLElement) {
@@ -74,8 +74,8 @@ export default class Wave extends React.Component<{ insertExtraNode?: boolean }>
     extraNode.className = `${getPrefixCls('')}-click-animating-node`;
     const attributeName = this.getAttributeName();
     node.setAttribute(attributeName, 'true');
-    // Not white or transparent or grey
-    styleForPseudo = styleForPseudo || document.createElement('style');
+    // Not white or transparnt or grey
+    styleForPesudo = styleForPesudo || document.createElement('style');
     if (
       waveColor &&
       waveColor !== '#ffffff' &&
@@ -86,18 +86,18 @@ export default class Wave extends React.Component<{ insertExtraNode?: boolean }>
     ) {
       // Add nonce if CSP exist
       if (this.csp && this.csp.nonce) {
-        styleForPseudo.nonce = this.csp.nonce;
+        styleForPesudo.nonce = this.csp.nonce;
       }
 
       extraNode.style.borderColor = waveColor;
-      styleForPseudo.innerHTML = `
+      styleForPesudo.innerHTML = `
       [${getPrefixCls('')}-click-animating-without-extra-node='true']::after, .${getPrefixCls(
         '',
       )}-click-animating-node {
         --antd-wave-shadow-color: ${waveColor};
       }`;
-      if (!document.body.contains(styleForPseudo)) {
-        document.body.appendChild(styleForPseudo);
+      if (!document.body.contains(styleForPesudo)) {
+        document.body.appendChild(styleForPesudo);
       }
     }
     if (insertExtraNode) {
@@ -116,6 +116,7 @@ export default class Wave extends React.Component<{ insertExtraNode?: boolean }>
     if (!e || e.target !== node || this.animationStart) {
       return;
     }
+
     this.resetEffect(node);
   };
 
@@ -180,8 +181,8 @@ export default class Wave extends React.Component<{ insertExtraNode?: boolean }>
     const attributeName = this.getAttributeName();
     node.setAttribute(attributeName, 'false'); // edge has bug on `removeAttribute` #14466
 
-    if (styleForPseudo) {
-      styleForPseudo.innerHTML = '';
+    if (styleForPesudo) {
+      styleForPesudo.innerHTML = '';
     }
 
     if (insertExtraNode && this.extraNode && node.contains(this.extraNode)) {

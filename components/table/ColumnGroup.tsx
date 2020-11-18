@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { ColumnType } from './interface';
 import { ColumnProps } from './Column';
 

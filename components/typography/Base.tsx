@@ -1,6 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import toArray from 'rc-util/lib/Children/toArray';
+import findDOMNode from 'rc-util/lib/Dom/findDOMNode';
 import copy from 'copy-to-clipboard';
 import omit from 'omit.js';
 import EditOutlined from '@ant-design/icons/EditOutlined';
@@ -13,7 +14,7 @@ import LocaleReceiver from '../locale-provider/LocaleReceiver';
 import devWarning from '../_util/devWarning';
 import TransButton from '../_util/transButton';
 import raf from '../_util/raf';
-import { isStyleSupport } from '../_util/styleChecker';
+import isStyleSupport from '../_util/styleChecker';
 import Tooltip from '../tooltip';
 import Typography, { TypographyProps } from './Typography';
 import Editable from './Editable';
@@ -317,7 +318,7 @@ class Base extends React.Component<InternalBlockProps, BaseState> {
     );
 
     const { content, text, ellipsis } = measure(
-      this.contentRef.current,
+      findDOMNode(this.contentRef.current),
       { rows, suffix },
       children,
       this.renderOperations(true),

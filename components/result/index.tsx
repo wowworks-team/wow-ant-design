@@ -5,7 +5,7 @@ import CloseCircleFilled from '@ant-design/icons/CloseCircleFilled';
 import ExclamationCircleFilled from '@ant-design/icons/ExclamationCircleFilled';
 import WarningFilled from '@ant-design/icons/WarningFilled';
 
-import { ConfigContext } from '../config-provider';
+import { ConfigConsumerProps, ConfigConsumer } from '../config-provider';
 import devWarning from '../_util/devWarning';
 
 import noFound from './noFound';
@@ -66,6 +66,7 @@ const renderIcon = (prefixCls: string, { status, icon }: ResultProps) => {
       </div>
     );
   }
+
   const iconNode = React.createElement(
     IconMap[status as Exclude<ResultStatusType, ExceptionStatusType>],
   );
@@ -82,36 +83,44 @@ export interface ResultType extends React.FC<ResultProps> {
   PRESENTED_IMAGE_500: React.ReactNode;
 }
 
-const Result: ResultType = ({
-  prefixCls: customizePrefixCls,
-  className: customizeClassName,
-  subTitle,
-  title,
-  style,
-  children,
-  status = 'info',
-  icon,
-  extra,
-}) => {
-  const { getPrefixCls, direction } = React.useContext(ConfigContext);
+const Result: ResultType = props => (
+  <ConfigConsumer>
+    {({ getPrefixCls, direction }: ConfigConsumerProps) => {
+      const {
+        prefixCls: customizePrefixCls,
+        className: customizeClassName,
+        subTitle,
+        title,
+        style,
+        children,
+        status,
+      } = props;
+      const prefixCls = getPrefixCls('result', customizePrefixCls);
+      const className = classNames(prefixCls, `${prefixCls}-${status}`, customizeClassName, {
+        [`${prefixCls}-rtl`]: direction === 'rtl',
+      });
+      return (
+        <div className={className} style={style}>
+          {renderIcon(prefixCls, props)}
+          <div className={`${prefixCls}-title`}>{title}</div>
+          {subTitle && <div className={`${prefixCls}-subtitle`}>{subTitle}</div>}
+          {renderExtra(prefixCls, props)}
+          {children && <div className={`${prefixCls}-content`}>{children}</div>}
+        </div>
+      );
+    }}
+  </ConfigConsumer>
+);
 
-  const prefixCls = getPrefixCls('result', customizePrefixCls);
-  const className = classNames(prefixCls, `${prefixCls}-${status}`, customizeClassName, {
-    [`${prefixCls}-rtl`]: direction === 'rtl',
-  });
-  return (
-    <div className={className} style={style}>
-      {renderIcon(prefixCls, { status, icon })}
-      <div className={`${prefixCls}-title`}>{title}</div>
-      {subTitle && <div className={`${prefixCls}-subtitle`}>{subTitle}</div>}
-      {renderExtra(prefixCls, { extra })}
-      {children && <div className={`${prefixCls}-content`}>{children}</div>}
-    </div>
-  );
+Result.defaultProps = {
+  status: 'info',
 };
 
-Result.PRESENTED_IMAGE_403 = ExceptionMap['403'];
-Result.PRESENTED_IMAGE_404 = ExceptionMap['404'];
-Result.PRESENTED_IMAGE_500 = ExceptionMap['500'];
+// eslint-disable-next-line prefer-destructuring
+Result.PRESENTED_IMAGE_403 = ExceptionMap[403];
+// eslint-disable-next-line prefer-destructuring
+Result.PRESENTED_IMAGE_404 = ExceptionMap[404];
+// eslint-disable-next-line prefer-destructuring
+Result.PRESENTED_IMAGE_500 = ExceptionMap[500];
 
 export default Result;

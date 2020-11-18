@@ -23,7 +23,7 @@ export interface TagProps extends React.HTMLAttributes<HTMLSpanElement> {
   closable?: boolean;
   closeIcon?: React.ReactNode;
   visible?: boolean;
-  onClose?: (e: React.MouseEvent<HTMLElement>) => void;
+  onClose?: Function;
   style?: React.CSSProperties;
   icon?: React.ReactNode;
 }
@@ -102,9 +102,9 @@ const InternalTag: React.ForwardRefRenderFunction<unknown, TagProps> = (
   const renderCloseIcon = () => {
     if (closable) {
       return closeIcon ? (
-        <span className={`${prefixCls}-close-icon`} onClick={handleCloseClick}>
+        <div className={`${prefixCls}-close-icon`} onClick={handleCloseClick}>
           {closeIcon}
-        </span>
+        </div>
       ) : (
         <CloseOutlined className={`${prefixCls}-close-icon`} onClick={handleCloseClick} />
       );

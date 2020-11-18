@@ -53,7 +53,7 @@ function showDeleteConfirm() {
     icon: <ExclamationCircleOutlined />,
     content: 'Some descriptions',
     okText: 'Yes',
-    okType: 'secondary',
+    okType: 'danger',
     cancelText: 'No',
     onOk() {
       console.log('OK');
@@ -70,7 +70,7 @@ function showPropsConfirm() {
     icon: <ExclamationCircleOutlined />,
     content: 'Some descriptions',
     okText: 'Yes',
-    okType: 'secondary',
+    okType: 'danger',
     okButtonProps: {
       disabled: true,
     },

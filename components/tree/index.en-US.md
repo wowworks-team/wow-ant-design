@@ -31,7 +31,6 @@ Almost anything can be represented in a tree structure. Examples include directo
 | draggable | Specifies whether this Tree is draggable (IE > 8) | boolean | false |  |
 | expandedKeys | (Controlled) Specifies the keys of the expanded treeNodes | string\[] | \[] |  |
 | filterTreeNode | Defines a function to filter (highlight) treeNodes. When the function returns `true`, the corresponding treeNode will be highlighted | function(node) | - |  |
-| height | Config virtual scroll height. Will not support horizontal scroll when enable this | number | - |  |
 | loadData | Load data asynchronously | function(node) | - |  |
 | loadedKeys | (Controlled) Set loaded tree nodes. Need work with `loadData` | string\[] | \[] |  |
 | multiple | Allows selecting multiple treeNodes | boolean | false |  |
@@ -64,10 +63,10 @@ Almost anything can be represented in a tree structure. Examples include directo
 | disableCheckbox | Disables the checkbox of the treeNode | boolean | false |  |
 | disabled | Disables the treeNode | boolean | false |  |
 | icon | Customize icon. When you pass component, whose render will receive full TreeNode props as component props | ReactNode \| (props) => ReactNode | - |  |
-| isLeaf | Determines if this is a leaf node(effective when `loadData` is specified). `false` will force trade TreeNode as a parent node | boolean | - |  |
+| isLeaf | Determines if this is a leaf node(effective when `loadData` is specified) | boolean | false |  |
 | key | Used with (default)ExpandedKeys / (default)CheckedKeys / (default)SelectedKeys. P.S.: It must be unique in all of treeNodes of the tree | string | (internal calculated position of treeNode) |  |
 | selectable | Set whether the treeNode can be selected | boolean | true |  |
-| title | Title | ReactNode | `---` |  |
+| title | Title | string \| ReactNode | `---` |  |
 
 ### DirectoryTree props
 
@@ -108,7 +107,3 @@ File icon realize by using switcherIcon. You can overwrite the style to hide it:
 ### Why defaultExpandedAll not working on ajax data?
 
 `default` prefix prop only works when inited. So `defaultExpandedAll` has already executed when ajax load data. You can control `expandedKeys` or render Tree when data loaded to realize expanded all.
-
-### Virtual scroll limitation
-
-Virtual scroll only render items in visible region. Thus not support auto width (like long `title` with horizontal scroll).

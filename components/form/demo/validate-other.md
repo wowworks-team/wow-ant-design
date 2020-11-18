@@ -120,11 +120,7 @@ const Demo = () => {
         </Radio.Group>
       </Form.Item>
 
-      <Form.Item
-        name="radio-button"
-        label="Radio.Button"
-        rules={[{ required: true, message: 'Please pick an item!' }]}
-      >
+      <Form.Item name="radio-button" label="Radio.Button">
         <Radio.Group>
           <Radio.Button value="a">item 1</Radio.Button>
           <Radio.Button value="b">item 2</Radio.Button>

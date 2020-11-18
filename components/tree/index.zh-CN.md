@@ -32,7 +32,6 @@ cover: https://gw.alipayobjects.com/zos/alicdn/Xh-oWqg9k/Tree.svg
 | draggable | 设置节点可拖拽（IE>8） | boolean | false |  |
 | expandedKeys | （受控）展开指定的树节点 | string\[] | \[] |  |
 | filterTreeNode | 按需筛选树节点（高亮），返回 true | function(node) | - |  |
-| height | 设置虚拟滚动容器高度，设置后内部节点不再支持横向滚动 | number | - |  |
 | loadData | 异步加载数据 | function(node) | - |  |
 | loadedKeys | （受控）已经加载的节点，需要配合 `loadData` 使用 | string\[] | \[] |  |
 | multiple | 支持点选多个节点（节点本身） | boolean | false |  |
@@ -65,10 +64,10 @@ cover: https://gw.alipayobjects.com/zos/alicdn/Xh-oWqg9k/Tree.svg
 | disableCheckbox | 禁掉 checkbox | boolean | false |
 | disabled | 禁掉响应 | boolean | false |
 | icon | 自定义图标。可接收组件，props 为当前节点 props | ReactNode \| (props) => ReactNode | - |  |
-| isLeaf | 设置为叶子节点(设置了`loadData`时有效)。为 `false` 时会强制将其作为父节点 | boolean | - |
+| isLeaf | 设置为叶子节点(设置了`loadData`时有效) | boolean | false |
 | key | 被树的 (default)ExpandedKeys / (default)CheckedKeys / (default)SelectedKeys 属性所用。注意：整个树范围内的所有节点的 key 值不能重复！ | string | (内部计算出的节点位置) |
 | selectable | 设置节点是否可被选中 | boolean | true |
-| title | 标题 | ReactNode | `---` |
+| title | 标题 | string \| ReactNode | `---` |
 
 ### DirectoryTree props
 
@@ -109,7 +108,3 @@ cover: https://gw.alipayobjects.com/zos/alicdn/Xh-oWqg9k/Tree.svg
 ### defaultExpandedAll 在异步加载数据时为何不生效？
 
 `default` 前缀属性只有在初始化时生效，因而异步加载数据时 `defaultExpandedAll` 已经执行完成。你可以通过受控 `expandedKeys` 或者在数据加载完成后渲染 Tree 来实现全部展开。
-
-### 虚拟滚动的限制
-
-虚拟滚动通过在仅渲染可视区域的元素来提升渲染性能。但是同时由于不会渲染所有节点，所以无法自动拓转横向宽度（比如超长 `title` 的横向滚动条）。

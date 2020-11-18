@@ -16,10 +16,7 @@ Display the document sample.
 ```jsx
 import { Typography, Divider } from 'antd';
 
-const { Title, Paragraph, Text, Link } = Typography;
-
-const blockContent = `AntV 是蚂蚁金服全新一代数据可视化解决方案，致力于提供一套简单方便、专业可靠、不限可能的数据可视化最佳实践。得益于丰富的业务场景和用户需求挑战，AntV 经历多年积累与不断打磨，已支撑整个阿里集团内外 20000+ 业务系统，通过了日均千万级 UV 产品的严苛考验。
-我们正在基础图表，图分析，图编辑，地理空间可视化，智能可视化等各个可视化的领域耕耘，欢迎同路人一起前行。`;
+const { Title, Paragraph, Text } = Typography;
 
 ReactDOM.render(
   <Typography>
@@ -48,13 +45,13 @@ ReactDOM.render(
     <Paragraph>
       <ul>
         <li>
-          <Link href="/docs/spec/proximity">Principles</Link>
+          <a href="/docs/spec/proximity">Principles</a>
         </li>
         <li>
-          <Link href="/docs/pattern/navigation">Patterns</Link>
+          <a href="/docs/pattern/navigation">Patterns</a>
         </li>
         <li>
-          <Link href="/docs/resource/download">Resource Download</Link>
+          <a href="/docs/resource/download">Resource Download</a>
         </li>
       </ul>
     </Paragraph>
@@ -84,20 +81,15 @@ ReactDOM.render(
     <Paragraph>
       <ul>
         <li>
-          <Link href="/docs/spec/proximity">设计原则</Link>
+          <a href="/docs/spec/proximity">设计原则</a>
         </li>
         <li>
-          <Link href="/docs/pattern/navigation">设计模式</Link>
+          <a href="/docs/pattern/navigation">设计模式</a>
         </li>
         <li>
-          <Link href="/docs/resource/download">设计资源</Link>
+          <a href="/docs/resource/download">设计资源</a>
         </li>
       </ul>
-    </Paragraph>
-
-    <Paragraph>
-      <blockquote>{blockContent}</blockquote>
-      <pre>{blockContent}</pre>
     </Paragraph>
 
     <Paragraph>
