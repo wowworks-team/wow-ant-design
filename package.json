@@ -86,7 +86,7 @@
     "site:test": "jest --config .jest.site.js --cache=false",
     "test-image": "npm run compile:less && docker-compose run tests",
     "version": "node ./scripts/generate-version",
-    "firebase:deploy": "rimraf ./buildFile && npm run build && firebase deploy",
+    "firebase:deploy": "rimraf ./_site && npm run build && firebase deploy",
     "pre": "npm run dist && npm run compile"
   },
   "husky": {
