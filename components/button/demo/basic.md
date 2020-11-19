@@ -11,7 +11,7 @@ title:
 
 ## en-US
 
-There are `primary` button, `default` button, `dashed` button, `text` button and `link` button in antd.
+There are `primary` button, `default` button, `secondary` button, `dashed` button, `text` button and `link` button in antd.
 
 ```jsx
 import { Button } from 'antd';
@@ -19,6 +19,7 @@ import { Button } from 'antd';
 ReactDOM.render(
   <>
     <Button type="primary">Primary Button</Button>
+    <Button type="secondary">Primary Button</Button>
     <Button>Default Button</Button>
     <Button type="dashed">Dashed Button</Button>
     <br />
