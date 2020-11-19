@@ -19,7 +19,7 @@ import { Button } from 'antd';
 ReactDOM.render(
   <>
     <Button type="primary">Primary Button</Button>
-    <Button type="secondary">Primary Button</Button>
+    <Button type="secondary">Secondary Button</Button>
     <Button>Default Button</Button>
     <Button type="dashed">Dashed Button</Button>
     <br />

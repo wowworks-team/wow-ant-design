@@ -32,31 +32,14 @@
   text-shadow: @btn-text-shadow;
   box-shadow: @btn-primary-shadow;
 
-  &:hover,
-  &:focus {
-    & when (@theme = dark) {
-      .button-color(
-        @color; ~`colorPalette('@{background}', 7) `; ~`colorPalette('@{background}', 7) `
-      );
-    }
-    & when not (@theme = dark) {
-      .button-color(
-        @color; ~`colorPalette('@{background}', 5) `; ~`colorPalette('@{background}', 5) `
-      );
-    }
+  &:hover {
+    .button-color(@color;  ~`colorPalette('@{background}', 7) `;  ~`colorPalette('@{background}', 7) `);
   }
-
+  &:focus {
+    .button-color(@color;  ~`colorPalette('@{background}', 7) `;  ~`colorPalette('@{background}', 7) `);
+  }
   &:active {
-    & when (@theme = dark) {
-      .button-color(
-        @color; ~`colorPalette('@{background}', 5) `; ~`colorPalette('@{background}', 5) `
-      );
-    }
-    & when not (@theme = dark) {
-      .button-color(
-        @color; ~`colorPalette('@{background}', 7) `; ~`colorPalette('@{background}', 7) `
-      );
-    }
+    .button-color(@color;  ~`colorPalette('@{background}', 8) `;  ~`colorPalette('@{background}', 8) `);
   }
 
   .button-disabled(@color; @background; @background);
@@ -65,13 +48,12 @@
 .button-variant-other(@color; @background; @border) {
   .button-color(@color; @background; @border);
 
-  &:hover,
-  &:focus {
+  &:hover {
     & when (@theme = dark) {
-      .button-color(@color; @background; @border);
+      .button-color(@color; @background; @color);
     }
     & when not (@theme = dark) {
-      .button-color(@color; @background; @border);
+      .button-color(@color; @background; @color);
     }
   }
   &:active {
@@ -86,12 +68,14 @@
 }
 .button-variant-secondary(@color; @background; @border) {
   .button-color(@color; @background; @border);
-  &:hover,
-  &:focus {
-    .button-color(@color; @background; #f3f3f3);
+  &:hover {
+    .button-color(@color;  #E6E6E6; #f3f3f3);
   }
-  &.active {
-    .button-color(@color; #F3F3F3; #f3f3f3) !important;
+  &:focus {
+    .button-color(@color; @background; @border);
+  }
+  &:active {
+    .button-color(@color; #d6d6d6; #f3f3f3) !important;
   }
   .button-disabled(@color; @background; @border);
 }
@@ -273,12 +257,6 @@
 // secondary button style
 .btn-secondary() {
   .button-variant-secondary(@btn-secondary-color; @btn-secondary-bg; @btn-secondary-border);
-  &:hover,
-  &:focus,
-  &.active {
-    text-decoration: none;
-    background: @btn-secondary-bg;
-  }
 }
 // ghost button style
 .btn-ghost() {
